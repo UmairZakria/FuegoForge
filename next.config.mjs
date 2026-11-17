@@ -1,10 +1,7 @@
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  output: 'export',
-
-  cacheComponents: true,
-  partialPrefetching: true,
+  output: "export",
 
   turbopack: {
     rules: {

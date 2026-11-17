@@ -1,5 +1,7 @@
 import { getAllProducts, getAllCategories } from "@/lib/products";
 
+export const dynamic = "force-static";
+
 const BUILD_TIMESTAMP = "2026-11-10T10:00:00.000Z";
 
 export default function sitemap() {
