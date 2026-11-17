@@ -22,9 +22,14 @@ export function getAllCategories() {
         name: p.categoryName,
         count: 0,
         sampleImage: p.mainImage,
+        sampleVideo: p.videoUrl || "",
       });
     }
-    map.get(p.category).count++;
+    const entry = map.get(p.category);
+    entry.count++;
+    if (!entry.sampleVideo && p.videoUrl) {
+      entry.sampleVideo = p.videoUrl;
+    }
   }
   return Array.from(map.values());
 }

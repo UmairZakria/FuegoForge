@@ -1,0 +1,69 @@
+import { ArrowUpRight } from "lucide-react";
+
+const PORTRAIT_IMAGE =
+  "https://images.unsplash.com/photo-1596944924616-7b38e7cfac36?auto=format&fit=crop&w=1800&q=85";
+
+export default function SplitPortraitGrid() {
+  const tiles = Array.from({ length: 16 }, (_, idx) => ({
+    row: Math.floor(idx / 4),
+    col: idx % 4,
+    idx,
+  }));
+
+  return (
+    <section className="layout-shell pb-[var(--section-gap)]">
+      <div
+        className="relative w-full aspect-square"
+        style={{ "--mosaic-gap": "clamp(6px, 0.7vw, 14px)" }}
+      >
+        {/* Full-Width 4x4 Sliced Portrait Mosaic */}
+        <div
+          className="w-full h-full grid grid-cols-4 grid-rows-4"
+          style={{ gap: "var(--mosaic-gap)" }}
+        >
+          {tiles.map(({ row, col, idx }) => (
+            <div
+              key={idx}
+              className="relative w-full h-full rounded-[10px] overflow-hidden bg-[var(--bg-secondary)]"
+            >
+              <img
+                src={PORTRAIT_IMAGE}
+                alt=""
+                aria-hidden="true"
+                className="absolute max-w-none object-cover object-center pointer-events-none select-none"
+                style={{
+                  width: "calc(400% + 3 * var(--mosaic-gap))",
+                  height: "calc(400% + 3 * var(--mosaic-gap))",
+                  left: `calc(-${col} * (100% + var(--mosaic-gap)))`,
+                  top: `calc(-${row} * (100% + var(--mosaic-gap)))`,
+                }}
+              />
+
+              {/* Subtle legibility scrim on the tiles behind the headline */}
+              {(row === 2 || row === 3) && (col === 2 || col === 3) && (
+                <div className="absolute inset-0 bg-[#171515]/22" />
+              )}
+            </div>
+          ))}
+        </div>
+
+        {/* Overlaid Editorial Headline & CTA in Lower-Right Quadrant */}
+        <div className="absolute left-[51.5%] top-[53%] right-[3%] z-10 space-y-3 sm:space-y-4 pointer-events-auto">
+          <h2 className="font-editorial text-[clamp(1.35rem,3vw,3.35rem)] font-light text-[#FAF7F2] leading-[1.04] drop-shadow-[0_2px_14px_rgba(23,21,21,0.5)]">
+            Luxury That <br />
+            Moves With Every <br />
+            Journey.
+          </h2>
+
+          <a
+            href="#creations"
+            className="inline-flex items-center gap-1.5 px-4 sm:px-6 py-2 sm:py-2.5 rounded-[6px] bg-[#FAF7F2] hover:bg-[var(--burgundy)] text-[var(--text-primary)] hover:text-[#FAF7F2] text-xs font-poppins font-medium transition-colors shadow-sm"
+          >
+            <span>Shop Now</span>
+            <ArrowUpRight className="w-3.5 h-3.5" />
+          </a>
+        </div>
+      </div>
+    </section>
+  );
+}

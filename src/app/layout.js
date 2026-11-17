@@ -1,10 +1,17 @@
-import { Cormorant_Garamond, Cinzel, Inter } from "next/font/google";
+import {
+  Cormorant_Garamond,
+  Cinzel,
+  Cinzel_Decorative,
+  Poppins,
+  Raleway,
+} from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import SmoothScroll from "@/components/SmoothScroll";
 
 const cormorant = Cormorant_Garamond({
-  variable: "--font-cormorant",
+  variable: "--next-font-cormorant",
   subsets: ["latin"],
   weight: ["300", "400", "500", "600"],
   style: ["normal", "italic"],
@@ -12,16 +19,32 @@ const cormorant = Cormorant_Garamond({
 });
 
 const cinzel = Cinzel({
-  variable: "--font-cinzel",
+  variable: "--next-font-cinzel",
   subsets: ["latin"],
   weight: ["400", "500", "600", "700"],
   display: "swap",
 });
 
-const inter = Inter({
-  variable: "--font-inter",
+const cinzelDecorative = Cinzel_Decorative({
+  variable: "--next-font-cinzel-decorative",
   subsets: ["latin"],
-  weight: ["300", "400", "500", "600"],
+  weight: ["400", "700", "900"],
+  display: "swap",
+});
+
+const poppins = Poppins({
+  variable: "--next-font-poppins",
+  subsets: ["latin"],
+  weight: ["300", "400", "500", "600", "700"],
+  style: ["normal", "italic"],
+  display: "swap",
+});
+
+const raleway = Raleway({
+  variable: "--next-font-raleway",
+  subsets: ["latin"],
+  weight: ["300", "400", "500", "600", "700"],
+  style: ["normal", "italic"],
   display: "swap",
 });
 
@@ -82,22 +105,35 @@ export const metadata = {
 };
 
 export default function RootLayout({ children }) {
-  // Global Organization Schema for Google & Bing
-  const organizationSchema = {
-    "@context": "https://schema.org",
-    "@type": "JewelryStore",
-    name: "FUEGO FORGE",
-    url: "https://fuegoforge.vercel.app",
-    logo: "https://i.etsystatic.com/58316748/c/932/932/330/130/il/66d1a3/8789393707/il_800x800.8789393707_i4u1.jpg",
-    description: "Artisan handcrafted luxury jewelry and circular heirlooms.",
-    priceRange: "$$",
-    sameAs: ["https://fuegoforge.etsy.com", "https://pinterest.com/fuegoforge"],
-  };
+  // Global Organization & WebSite SearchAction Schema for Google & Bing
+  const organizationSchema = [
+    {
+      "@context": "https://schema.org",
+      "@type": "JewelryStore",
+      name: "FUEGO FORGE",
+      url: "https://fuegoforge.vercel.app",
+      logo: "https://i.etsystatic.com/58316748/c/932/932/330/130/il/66d1a3/8789393707/il_800x800.8789393707_i4u1.jpg",
+      description: "Artisan handcrafted luxury jewelry and circular heirlooms.",
+      priceRange: "$$",
+      sameAs: ["https://fuegoforge.etsy.com", "https://pinterest.com/fuegoforge"],
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      name: "FUEGO FORGE",
+      url: "https://fuegoforge.vercel.app",
+      potentialAction: {
+        "@type": "SearchAction",
+        target: "https://fuegoforge.vercel.app/?q={search_term_string}",
+        "query-input": "required name=search_term_string",
+      },
+    },
+  ];
 
   return (
     <html
       lang="en"
-      className={`${cormorant.variable} ${cinzel.variable} ${inter.variable} antialiased`}
+      className={`${cormorant.variable} ${cinzel.variable} ${cinzelDecorative.variable} ${poppins.variable} ${raleway.variable} antialiased`}
     >
       <head>
         <script
@@ -105,7 +141,8 @@ export default function RootLayout({ children }) {
           dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationSchema) }}
         />
       </head>
-      <body className="min-h-screen flex flex-col bg-[#FAF8F5] text-[#121212]">
+      <body className="min-h-screen flex flex-col bg-[var(--bg-primary)] text-[var(--text-primary)]">
+        <SmoothScroll />
         <Navbar />
         <main className="flex-1">{children}</main>
         <Footer />

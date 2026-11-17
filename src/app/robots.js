@@ -18,3 +18,4 @@ export default function robots() {
     host: "https://fuegoforge.vercel.app",
   };
 }
+
