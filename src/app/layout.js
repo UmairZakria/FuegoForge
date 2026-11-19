@@ -94,6 +94,9 @@ export const metadata = {
     description: "Exclusive artisan jewelry pieces designed for timeless elegance.",
     creator: "@fuegoforge",
   },
+  verification: {
+    google: "8wGp0LK0OoBkJ7Fl2FqjwGqDIffdtCFYbCaVbUybDOk",
+  },
   robots: {
     index: true,
     follow: true,

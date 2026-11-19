@@ -24,7 +24,8 @@ export async function generateMetadata({ params }) {
   }
 
   const title = `${product.title} | FUEGO FORGE`;
-  const description = `${product.title}. Handcrafted luxury fine jewelry by Fuego Forge. Get 50% off on Etsy with free shipping. Rated 5.0 stars.`;
+  const ratingText = Number(product.rating || 4.9).toFixed(1);
+  const description = `${product.title}. Handcrafted luxury fine jewelry by Fuego Forge. Get 50% off on Etsy with free shipping. Rated ${ratingText} stars.`;
   const canonicalUrl = `https://fuegoforge.vercel.app/product/${product.slug}`;
 
   return {
@@ -88,6 +89,7 @@ export default async function ProductDetailPage({ params }) {
       name: "FUEGO FORGE",
     },
     category: product.categoryName,
+    ...(product.tags?.length ? { keywords: product.tags.join(", ") } : {}),
     ...(product.videoUrl
       ? {
           subjectOf: {
@@ -303,6 +305,25 @@ export default async function ProductDetailPage({ params }) {
                   ))}
                 </ul>
               </div>
+
+              {product.tags?.length > 0 && (
+                <div className="space-y-2.5 pt-5 border-t border-[var(--border-light)]">
+                  <h2 className="text-xs font-poppins font-medium text-[#171515]">
+                    Keywords &amp; Style Tags
+                  </h2>
+                  <div className="flex flex-wrap gap-1.5">
+                    {product.tags.map((tag) => (
+                      <Link
+                        key={tag}
+                        href={`/?q=${encodeURIComponent(tag)}#creations`}
+                        className="px-2.5 py-1 rounded-full border border-[var(--border-light)] bg-[var(--bg-primary)] hover:border-[#9E2A30] hover:text-[#9E2A30] text-[11px] font-poppins text-[var(--text-secondary)] capitalize transition-colors"
+                      >
+                        {tag}
+                      </Link>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </div>
