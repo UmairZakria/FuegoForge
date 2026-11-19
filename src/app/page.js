@@ -6,6 +6,8 @@ import CategoryCarousel from "@/components/CategoryCarousel";
 import SplitPortraitGrid from "@/components/SplitPortraitGrid";
 import EditorialJournal from "@/components/EditorialJournal";
 import Parallax from "@/components/Parallax";
+import SmartVideo from "@/components/SmartVideo";
+import HeroReveal from "@/components/HeroReveal";
 import { ArrowRight, ArrowDown, ArrowUpRight, ChevronRight } from "lucide-react";
 
 export const metadata = {
@@ -46,46 +48,58 @@ export default function HomePage() {
   ];
 
   return (
-    <div className="bg-[var(--bg-primary)]">
+    <div className="bg-transparent">
       {/* =====================================================================
-          1. ASYMMETRIC EDITORIAL HERO (Exact Reference Composition & Lighting)
+          1. ASYMMETRIC EDITORIAL HERO (GSAP Choreographed Reveal)
          ===================================================================== */}
-      <section className="relative min-h-screen flex flex-col justify-between bg-[#F4EFE6] overflow-hidden">
-        {/* Seamless Full-Canvas Macro Portrait (Left 42% Portrait -> Right 58% Warm Ivory) */}
-        <div
-          data-hero-portrait="true"
-          className="relative lg:absolute lg:inset-0 w-full h-[46vh] min-h-[300px] sm:h-[58vh] lg:h-full overflow-hidden select-none pointer-events-none"
-        >
-          <Parallax speed={0.14} scale={1.08} className="w-full h-full">
-            <img
-              src="/hero-editorial.jpg"
-              alt="Fuego Forge Editorial Campaign Portrait"
-              className="w-full h-full object-cover object-[18%_25%] sm:object-[20%_center] lg:object-left"
-            />
-          </Parallax>
-          {/* Subtle bottom fade on mobile so text below reads effortlessly */}
-          <div className="lg:hidden absolute inset-x-0 bottom-0 h-20 bg-gradient-to-t from-[#F4EFE6] via-[#F4EFE6]/70 to-transparent" />
-        </div>
-
-        {/* Main Layered Editorial Stage */}
-        <div className="layout-shell relative z-10 flex-1 flex flex-col justify-between pt-3 sm:pt-6 lg:pt-[clamp(76px,8vw,116px)] pb-5 lg:pb-[clamp(20px,2.2vw,36px)] gap-5 lg:gap-8">
-          {/* Middle Stage: Oversized Layered Serif Headline + Right Editorial Manifesto */}
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 lg:gap-8 items-center my-auto pt-0 lg:pt-10">
-            {/* Oversized Multi-Tone Serif Headline Overlapping Portrait & Warm Ivory */}
-            <Parallax speed={-0.06} className="lg:col-span-9 animate-editorial-in">
-              <h1 className="font-editorial text-[clamp(2.15rem,8.8vw,3.5rem)] lg:text-[clamp(2.5rem,5.9vw,7.1rem)] leading-[0.95] lg:leading-[0.94] font-light uppercase tracking-[-0.02em] select-none">
-                <span className="block">
-                  <span className="text-[#6E2628]">NOT FOR</span>{" "}
-                  <span className="text-[#C5BEB5] font-extralight">SOMEDAY</span>
-                </span>
-                <span className="block pl-0 sm:pl-10 lg:pl-[clamp(1.5rem,11.5vw,14.5rem)] text-[#171515] mt-1">
-                  MADE TO LIVE IN
-                </span>
-              </h1>
+      <HeroReveal>
+        <section className="relative min-h-screen flex flex-col justify-between bg-[#F4EFE6] overflow-hidden">
+          {/* Seamless Full-Canvas Macro Portrait (Left 42% Portrait -> Right 58% Warm Ivory) */}
+          <div
+            data-hero-portrait="true"
+            className="relative lg:absolute lg:inset-0 w-full h-[46vh] min-h-[300px] sm:h-[58vh] lg:h-full overflow-hidden select-none pointer-events-none"
+          >
+            <Parallax speed={0.14} scale={1.08} className="w-full h-full">
+              <img
+                data-hero-img="true"
+                src="/hero-editorial.jpg"
+                alt="Fuego Forge Editorial Campaign Portrait"
+                className="w-full h-full object-cover object-[18%_25%] sm:object-[20%_center] lg:object-left will-change-transform"
+              />
             </Parallax>
+            {/* Subtle bottom fade on mobile so text below reads effortlessly */}
+            <div className="lg:hidden absolute inset-x-0 bottom-0 h-20 bg-gradient-to-t from-[#F4EFE6] via-[#F4EFE6]/70 to-transparent" />
+          </div>
 
-            {/* Right-Aligned Supporting Editorial Copy & Minimal CTA */}
-            <div className="lg:col-span-3 lg:text-right flex flex-col lg:items-end justify-between space-y-3 lg:space-y-6 lg:pt-4">
+          {/* Main Layered Editorial Stage */}
+          <div className="layout-shell relative z-10 flex-1 flex flex-col justify-between pt-3 sm:pt-6 lg:pt-[clamp(76px,8vw,116px)] pb-5 lg:pb-[clamp(20px,2.2vw,36px)] gap-5 lg:gap-8">
+            {/* Middle Stage: Oversized Layered Serif Headline + Right Editorial Manifesto */}
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 lg:gap-8 items-center my-auto pt-0 lg:pt-10">
+              {/* Oversized Multi-Tone Serif Headline Overlapping Portrait & Warm Ivory */}
+              <Parallax speed={-0.06} className="lg:col-span-9">
+                <h1 className="font-editorial text-[clamp(2.15rem,8.8vw,3.5rem)] lg:text-[clamp(2.5rem,5.9vw,7.1rem)] leading-[0.95] lg:leading-[0.94] font-light uppercase tracking-[-0.02em] select-none">
+                  <span className="block overflow-hidden">
+                    <span data-hero-line="true" className="block">
+                      <span className="text-[#6E2628]">NOT FOR</span>{" "}
+                      <span className="text-[#C5BEB5] font-extralight">SOMEDAY</span>
+                    </span>
+                  </span>
+                  <span className="block overflow-hidden mt-1">
+                    <span
+                      data-hero-line="true"
+                      className="block pl-0 sm:pl-10 lg:pl-[clamp(1.5rem,11.5vw,14.5rem)] text-[#171515]"
+                    >
+                      MADE TO LIVE IN
+                    </span>
+                  </span>
+                </h1>
+              </Parallax>
+
+              {/* Right-Aligned Supporting Editorial Copy & Minimal CTA */}
+              <div
+                data-hero-fade="true"
+                className="lg:col-span-3 lg:text-right flex flex-col lg:items-end justify-between space-y-3 lg:space-y-6 lg:pt-4"
+              >
               <div className="space-y-1 max-w-[30ch] lg:ml-auto">
                 <span className="text-[11px] font-cinzel-decorative uppercase tracking-[0.22em] text-[#ACA49B] block">
                   FUEGO FORGE
@@ -115,7 +129,7 @@ export default function HomePage() {
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 lg:gap-6 items-end pt-1 lg:pt-2">
             <div className="hidden lg:block lg:col-span-6" />
 
-            <div className="lg:col-span-6">
+            <div data-hero-fade="true" className="lg:col-span-6">
               <Parallax speed={-0.04} className="grid grid-cols-2 gap-3 sm:gap-4 max-w-[660px] ml-auto w-full">
               {/* Preview Card 1: Pear Moissanite Gold Huggie on Skin */}
               {earringPreview && (
@@ -124,13 +138,10 @@ export default function HomePage() {
                   className="group relative aspect-[4/3] sm:aspect-[16/10] rounded-[8px] overflow-hidden bg-[#3B2820] shadow-sm"
                 >
                   {earringPreview.videoUrl ? (
-                    <video
+                    <SmartVideo
                       src={earringPreview.videoUrl}
                       poster={earringPreview.mainImage}
-                      autoPlay
-                      muted
-                      loop
-                      playsInline
+                      priority
                       className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-700 ease-out"
                     />
                   ) : (
@@ -167,13 +178,10 @@ export default function HomePage() {
                   className="group relative aspect-[4/3] sm:aspect-[16/10] rounded-[8px] overflow-hidden bg-[#3B2820] shadow-sm"
                 >
                   {necklacePreview.videoUrl ? (
-                    <video
+                    <SmartVideo
                       src={necklacePreview.videoUrl}
                       poster={necklacePreview.mainImage}
-                      autoPlay
-                      muted
-                      loop
-                      playsInline
+                      priority
                       className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-700 ease-out"
                     />
                   ) : (
@@ -250,6 +258,7 @@ export default function HomePage() {
           </div>
         </div>
       </section>
+      </HeroReveal>
 
       {/* =====================================================================
           2. EDITORIAL BENTO SHOWCASE (4-Card Asymmetric Luxury Composition)
@@ -279,13 +288,10 @@ export default function HomePage() {
             <div className="sm:col-span-6 relative min-h-[280px] sm:min-h-full overflow-hidden">
               <Parallax speed={0.07} scale={1.08} className="w-full h-full">
                 {bentoNecklace?.videoUrl ? (
-                  <video
+                  <SmartVideo
                     src={bentoNecklace.videoUrl}
                     poster={bentoNecklace.mainImage}
-                    autoPlay
-                    muted
-                    loop
-                    playsInline
+                    preload="none"
                     className="w-full h-full object-cover object-top"
                   />
                 ) : (
@@ -357,13 +363,10 @@ export default function HomePage() {
 
               <div className="w-24 h-24 sm:w-28 sm:h-28 rounded-[10px] overflow-hidden shrink-0 border border-[var(--border-light)]">
                 {bentoHuggie?.videoUrl ? (
-                  <video
+                  <SmartVideo
                     src={bentoHuggie.videoUrl}
                     poster={bentoHuggie.mainImage}
-                    autoPlay
-                    muted
-                    loop
-                    playsInline
+                    preload="none"
                     className="w-full h-full object-cover"
                   />
                 ) : (

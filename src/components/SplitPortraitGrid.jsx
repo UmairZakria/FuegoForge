@@ -1,7 +1,7 @@
 import { ArrowUpRight } from "lucide-react";
 
 const PORTRAIT_IMAGE =
-  "https://images.unsplash.com/photo-1596944924616-7b38e7cfac36?auto=format&fit=crop&w=1800&q=85";
+  "https://images.unsplash.com/photo-1596944924616-7b38e7cfac36?auto=format&fit=crop&w=1400&q=82";
 
 export default function SplitPortraitGrid() {
   const tiles = Array.from({ length: 16 }, (_, idx) => ({
@@ -12,37 +12,28 @@ export default function SplitPortraitGrid() {
 
   return (
     <section className="layout-shell pb-[var(--section-gap)]">
-      <div
-        className="relative w-full aspect-square"
-        style={{ "--mosaic-gap": "clamp(6px, 0.7vw, 14px)" }}
-      >
-        {/* Full-Width 4x4 Sliced Portrait Mosaic */}
-        <div
-          className="w-full h-full grid grid-cols-4 grid-rows-4"
-          style={{ gap: "var(--mosaic-gap)" }}
-        >
-          {tiles.map(({ row, col, idx }) => (
-            <div
-              key={idx}
-              className="relative w-full h-full rounded-[10px] overflow-hidden bg-[var(--bg-secondary)]"
-            >
-              <img
-                src={PORTRAIT_IMAGE}
-                alt=""
-                aria-hidden="true"
-                className="absolute max-w-none object-cover object-center pointer-events-none select-none"
-                style={{
-                  width: "calc(400% + 3 * var(--mosaic-gap))",
-                  height: "calc(400% + 3 * var(--mosaic-gap))",
-                  left: `calc(-${col} * (100% + var(--mosaic-gap)))`,
-                  top: `calc(-${row} * (100% + var(--mosaic-gap)))`,
-                }}
-              />
+      <div className="relative w-full aspect-square overflow-hidden bg-[var(--bg-primary)]">
+        {/* Single Optimized Image Layer (replaces 16 duplicate 400% textures) */}
+        <img
+          src={PORTRAIT_IMAGE}
+          alt="Fuego Forge Editorial Portrait"
+          loading="lazy"
+          decoding="async"
+          className="absolute inset-0 w-full h-full object-cover object-center select-none pointer-events-none"
+        />
 
-              {/* Subtle legibility scrim on the tiles behind the headline */}
-              {(row === 2 || row === 3) && (col === 2 || col === 3) && (
-                <div className="absolute inset-0 bg-[#171515]/22" />
-              )}
+        {/* 4x4 Rounded-Window Cutout Grid Mask */}
+        <div className="absolute inset-0 grid grid-cols-4 grid-rows-4 pointer-events-none">
+          {tiles.map(({ row, col, idx }) => (
+            <div key={idx} className="relative overflow-hidden p-[clamp(3px,0.35vw,7px)]">
+              <div
+                className="w-full h-full rounded-[10px] relative"
+                style={{ boxShadow: "0 0 0 24px var(--bg-primary)" }}
+              >
+                {(row === 2 || row === 3) && (col === 2 || col === 3) && (
+                  <div className="absolute inset-0 rounded-[10px] bg-[#171515]/22" />
+                )}
+              </div>
             </div>
           ))}
         </div>

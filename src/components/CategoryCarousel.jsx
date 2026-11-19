@@ -66,9 +66,10 @@ export default function CategoryCarousel({ categories = [] }) {
               {cat.sampleImage ? (
                 <Parallax speed={0.05} scale={1.06} className="w-full h-full">
                   <img
-                    src={cat.sampleImage}
+                    src={cat.sampleImage.replace("/il_fullxfull.", "/il_600xN.")}
                     alt={cat.name}
                     loading="lazy"
+                    decoding="async"
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
                   />
                 </Parallax>

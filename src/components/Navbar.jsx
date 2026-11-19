@@ -3,7 +3,8 @@
 import Link from "next/link";
 import { useRouter, usePathname } from "next/navigation";
 import { useState, useEffect, useRef } from "react";
-import { Search, ShoppingBag, ArrowRight, X, Menu } from "lucide-react";
+import { Search, ShoppingBag, Heart, ArrowRight, X, Menu } from "lucide-react";
+import { useWishlist } from "@/components/WishlistProvider";
 
 const EDITORIAL_NAV = [
   { name: "Collections", href: "/#disciplines" },
@@ -28,6 +29,7 @@ export default function Navbar() {
   const headerRef = useRef(null);
   const logoRef = useRef(null);
   const rightNavRef = useRef(null);
+  const { items: wishlistItems, setIsOpen: setIsWishlistOpen } = useWishlist();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
@@ -37,68 +39,38 @@ export default function Navbar() {
   useEffect(() => {
     let rafId = 0;
 
-    const parseRgba = (colorStr) => {
-      if (!colorStr || colorStr === "transparent") return null;
-      const m = colorStr.match(/rgba?\(\s*(\d+)[,\s]+(\d+)[,\s]+(\d+)(?:[,/\s]+([\d.]+))?\s*\)/i);
-      if (!m) return null;
-      const r = Number(m[1]);
-      const g = Number(m[2]);
-      const b = Number(m[3]);
-      const a = m[4] !== undefined ? Number(m[4]) : 1;
-      if (a < 0.2) return null;
-      return { r, g, b, a };
-    };
-
-    const isPointOnDark = (cx, cy) => {
+    const detectContrast = () => {
+      rafId = 0;
+      const navY = 38;
       const heroPortrait = document.querySelector("[data-hero-portrait]");
       const heroBottomBar = document.querySelector("[data-hero-bottom-bar]");
+      const footer = document.querySelector("footer");
+
+      // Check footer overlap (entire footer is dark video)
+      if (footer) {
+        const fRect = footer.getBoundingClientRect();
+        if (navY >= fRect.top && navY <= fRect.bottom) {
+          setIsLogoOnDark(true);
+          setIsRightNavOnDark(true);
+          return;
+        }
+      }
+
+      // Check hero portrait (left side is dark portrait, right side is warm ivory)
       if (heroPortrait) {
         const pRect = heroPortrait.getBoundingClientRect();
         const bRect = heroBottomBar ? heroBottomBar.getBoundingClientRect() : null;
-        const coveredByBottomBar =
-          bRect && cy >= bRect.top && cy <= bRect.bottom && cx >= bRect.left && cx <= bRect.right;
+        const inBottomBar = bRect && navY >= bRect.top && navY <= bRect.bottom;
 
-        if (!coveredByBottomBar && cy >= pRect.top && cy <= pRect.bottom) {
-          const isDesktop = window.innerWidth >= 1024;
-          const darkPortraitRightEdge = isDesktop
-            ? pRect.left + pRect.width * 0.45
-            : pRect.right;
-          return cx <= darkPortraitRightEdge;
+        if (!inBottomBar && navY >= pRect.top && navY <= pRect.bottom) {
+          setIsLogoOnDark(true);
+          setIsRightNavOnDark(window.innerWidth < 1024);
+          return;
         }
       }
 
-      const elements = document.elementsFromPoint(cx, cy);
-      for (const el of elements) {
-        if (headerRef.current && headerRef.current.contains(el)) continue;
-
-        if (el.tagName === "VIDEO") return true;
-
-        if (el.tagName === "IMG") {
-          if (heroPortrait && heroPortrait.contains(el)) continue;
-          return true;
-        }
-
-        const style = window.getComputedStyle(el);
-        const bg = parseRgba(style.backgroundColor);
-        if (bg) {
-          const luminance = 0.299 * bg.r + 0.587 * bg.g + 0.114 * bg.b;
-          return luminance < 140;
-        }
-      }
-
-      return false;
-    };
-
-    const detectContrast = () => {
-      rafId = 0;
-      if (logoRef.current) {
-        const rect = logoRef.current.getBoundingClientRect();
-        setIsLogoOnDark(isPointOnDark(rect.left + rect.width / 2, rect.top + rect.height / 2));
-      }
-      if (rightNavRef.current) {
-        const rect = rightNavRef.current.getBoundingClientRect();
-        setIsRightNavOnDark(isPointOnDark(rect.left + rect.width / 3, rect.top + rect.height / 2));
-      }
+      setIsLogoOnDark(false);
+      setIsRightNavOnDark(false);
     };
 
     const scheduleCheck = () => {
@@ -206,6 +178,28 @@ export default function Navbar() {
                 aria-label="Search Archive"
               >
                 {isSearchOpen ? <X className="w-3.5 h-3.5" /> : <Search className="w-3.5 h-3.5" />}
+              </button>
+
+              {/* Saved Pieces (Wishlist Drawer Trigger) */}
+              <button
+                type="button"
+                onClick={() => setIsWishlistOpen(true)}
+                className={`p-2 transition-colors duration-300 relative cursor-pointer ${
+                  isRightNavOnDark
+                    ? "text-white hover:text-[#E0535C]"
+                    : "text-[var(--text-primary)] hover:text-[#9E2A30]"
+                }`}
+                aria-label="Open Saved Pieces"
+                title="Saved Pieces"
+              >
+                <Heart
+                  className={`w-3.5 h-3.5 ${wishlistItems.length > 0 ? "fill-[#9E2A30] text-[#9E2A30]" : ""}`}
+                />
+                {wishlistItems.length > 0 && (
+                  <span className="absolute -top-0.5 -right-0.5 min-w-[15px] h-[15px] px-1 rounded-full bg-[#9E2A30] text-white text-[9px] font-poppins font-semibold flex items-center justify-center leading-none">
+                    {wishlistItems.length}
+                  </span>
+                )}
               </button>
 
               {/* Shopping Bag Icon */}

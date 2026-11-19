@@ -71,8 +71,10 @@ export default function ProductGallery({ images = [], videoUrl = "", title = "" 
                 </>
               ) : (
                 <img
-                  src={item.src}
+                  src={item.src.replace("/il_fullxfull.", "/il_600xN.")}
                   alt={`Thumbnail ${idx + 1}`}
+                  loading="lazy"
+                  decoding="async"
                   className="w-full h-full object-cover"
                 />
               )}

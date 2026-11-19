@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { ArrowRight, ArrowUpRight, ExternalLink } from "lucide-react";
+import SmartVideo from "@/components/SmartVideo";
 
 export default function Footer() {
   const [email, setEmail] = useState("");
@@ -17,17 +18,14 @@ export default function Footer() {
   };
 
   return (
-    <footer className="relative min-h-[88vh] flex flex-col justify-between bg-[#141110] text-[#FAF7F2] overflow-hidden border-t border-[var(--border-dark)]">
+    <footer className="relative z-10 min-h-[88vh] flex flex-col justify-between bg-[#141110] text-[#FAF7F2] overflow-hidden border-t border-[var(--border-dark)]">
       {/* =====================================================================
           1. FULL-BLEED CINEMATIC BACKGROUND VIDEO (/Footer-BG.mp4)
          ===================================================================== */}
       <div className="absolute inset-0 select-none pointer-events-none">
-        <video
+        <SmartVideo
           src="/Footer-BG.mp4"
-          autoPlay
-          muted
-          loop
-          playsInline
+          preload="none"
           className="w-full h-full object-cover object-[58%_22%] scale-[1.01]"
         />
         {/* Directional Editorial Scrims: Preserves the model in center-right while grounding left & bottom text */}

@@ -3,6 +3,7 @@ import Link from "next/link";
 import { getAllProducts, getProductBySlug } from "@/lib/products";
 import ProductGallery from "@/components/ProductGallery";
 import ProductCard from "@/components/ProductCard";
+import WishlistButton from "@/components/WishlistButton";
 import { Star, ArrowRight } from "lucide-react";
 
 // SSG: Pre-render all product pages statically at build time
@@ -134,7 +135,7 @@ export default async function ProductDetailPage({ params }) {
     },
     aggregateRating: {
       "@type": "AggregateRating",
-      ratingValue: "5.0",
+      ratingValue: Number(product.rating || 4.9).toFixed(1),
       reviewCount: String(product.reviewsCount || 48),
     },
   };
@@ -204,14 +205,17 @@ export default async function ProductDetailPage({ params }) {
           </div>
 
           {/* Right Column: Clean, Bold Editorial Purchase Panel */}
-          <div className="lg:col-span-5 xl:col-span-5 space-y-7 lg:sticky lg:top-[calc(var(--header-height)+24px)] bg-[var(--bg-card)] border border-[var(--border-light)] rounded-[12px] p-[var(--panel-padding)]">
-            {/* Category + Title */}
+          <div className="lg:col-span-5 xl:col-span-5 space-y-7 lg:sticky lg:top-[calc(var(--header-height)+24px)] bg-[var(--bg-card)]/90 border border-[var(--border-light)] rounded-[12px] p-[var(--panel-padding)]">
+            {/* Category + Save Favorite Button + Title */}
             <div className="space-y-2.5">
-              <span className="text-xs font-poppins text-[var(--burgundy)] font-medium block">
-                {product.categoryName}
-              </span>
+              <div className="flex items-center justify-between gap-3">
+                <span className="text-xs font-poppins text-[var(--burgundy)] font-medium block">
+                  {product.categoryName}
+                </span>
+                <WishlistButton product={product} />
+              </div>
 
-              <h1 className="font-editorial text-[clamp(1.75rem,2.3vw,2.6rem)] leading-[1.08] text-[#171515] font-normal">
+              <h1 className="font-cormorant  text-[clamp(1.75rem,2.3vw,2.6rem)] leading-[1.08] font-medium  italic text-[#171515] ">
                 {product.title}
               </h1>
             </div>
@@ -231,7 +235,9 @@ export default async function ProductDetailPage({ params }) {
 
               <div className="flex items-center gap-1.5 text-xs font-poppins text-[var(--text-secondary)]">
                 <Star className="w-3.5 h-3.5 fill-[#171515] text-[#171515]" />
-                <span className="font-semibold text-[#171515]">5.0</span>
+                <span className="font-semibold text-[#171515]">
+                  {Number(product.rating || 4.9).toFixed(1)}
+                </span>
                 <span className="text-[var(--text-muted)]">({product.reviewsCount})</span>
               </div>
             </div>

@@ -1,8 +1,14 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 import { Heart, ArrowRight } from "lucide-react";
+import { useWishlist } from "@/components/WishlistProvider";
+
+function getCardImageUrl(url) {
+  if (!url || typeof url !== "string") return "";
+  return url.replace("/il_fullxfull.", "/il_600xN.").replace("/il_800x800.", "/il_600xN.");
+}
 
 export default function ProductCard({ product }) {
   const {
@@ -18,48 +24,80 @@ export default function ProductCard({ product }) {
   } = product;
 
   const hasVideo = Boolean(videoUrl && videoUrl.trim());
-  const secondaryImage = images.length > 1 ? images[1] : null;
-  const [wishlisted, setWishlisted] = useState(false);
+  const thumbMain = getCardImageUrl(mainImage);
+  const thumbSecondary = images.length > 1 ? getCardImageUrl(images[1]) : "";
+
+  const { isWishlisted, toggleItem } = useWishlist();
+  const wishlisted = isWishlisted(product.id);
   const [isHovered, setIsHovered] = useState(false);
+  const [playVideo, setPlayVideo] = useState(false);
+  const hoverTimerRef = useRef(null);
+
+  useEffect(() => {
+    return () => {
+      if (hoverTimerRef.current) window.clearTimeout(hoverTimerRef.current);
+    };
+  }, []);
+
+  const handleMouseEnter = () => {
+    setIsHovered(true);
+    if (hasVideo) {
+      hoverTimerRef.current = window.setTimeout(() => {
+        setPlayVideo(true);
+      }, 320);
+    }
+  };
+
+  const handleMouseLeave = () => {
+    setIsHovered(false);
+    setPlayVideo(false);
+    if (hoverTimerRef.current) {
+      window.clearTimeout(hoverTimerRef.current);
+      hoverTimerRef.current = null;
+    }
+  };
 
   return (
     <article
       className="group flex flex-col"
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
     >
-      {/* Tall Editorial Image / Hover Video Frame */}
+      {/* Tall Editorial Image / Hover-Intent Video Frame */}
       <div className="relative aspect-[4/5] rounded-[12px] overflow-hidden bg-[var(--bg-secondary)]">
         <Link href={`/product/${slug}`} className="block w-full h-full">
-          {mainImage ? (
+          {thumbMain ? (
             <>
               <img
-                src={mainImage}
+                src={thumbMain}
                 alt={title}
                 loading="lazy"
-                className={`w-full h-full object-cover transition-all duration-700 ease-out group-hover:scale-105 ${
-                  hasVideo || secondaryImage ? "group-hover:opacity-0" : ""
+                decoding="async"
+                className={`w-full h-full object-cover transition-transform duration-500 ease-out group-hover:scale-105 ${
+                  playVideo || (isHovered && !hasVideo && thumbSecondary)
+                    ? "opacity-0"
+                    : "opacity-100"
                 }`}
               />
-              {hasVideo && isHovered ? (
+              {playVideo && hasVideo && (
                 <video
                   src={videoUrl}
-                  poster={secondaryImage || mainImage}
+                  poster={thumbSecondary || thumbMain}
                   autoPlay
                   muted
                   loop
                   playsInline
-                  className="absolute inset-0 w-full h-full object-cover transition-opacity duration-500"
+                  preload="metadata"
+                  className="absolute inset-0 w-full h-full object-cover"
                 />
-              ) : (
-                secondaryImage && (
-                  <img
-                    src={secondaryImage}
-                    alt={`${title} alternate view`}
-                    loading="lazy"
-                    className="absolute inset-0 w-full h-full object-cover opacity-0 group-hover:opacity-100 group-hover:scale-105 transition-all duration-700 ease-out"
-                  />
-                )
+              )}
+              {isHovered && !hasVideo && thumbSecondary && (
+                <img
+                  src={thumbSecondary}
+                  alt={`${title} alternate view`}
+                  decoding="async"
+                  className="absolute inset-0 w-full h-full object-cover scale-105"
+                />
               )}
             </>
           ) : (
@@ -74,25 +112,25 @@ export default function ProductCard({ product }) {
           type="button"
           onClick={(e) => {
             e.preventDefault();
-            setWishlisted((prev) => !prev);
+            toggleItem(product);
           }}
           aria-label={wishlisted ? "Remove from wishlist" : "Save to wishlist"}
-          className={`absolute top-3 right-3 w-8 h-8 rounded-full flex items-center justify-center transition-all duration-300 cursor-pointer ${
+          className={`absolute top-3 right-3 w-8 h-8 rounded-full flex items-center justify-center transition-all duration-250 ease-out active:scale-90 cursor-pointer ${
             wishlisted
-              ? "bg-[#9E2A30] text-white scale-105"
-              : "bg-white/90 text-[#171515] opacity-0 group-hover:opacity-100 hover:bg-[#171515] hover:text-white shadow-xs"
+              ? "bg-[#9E2A30] text-white opacity-100 scale-105 shadow-sm"
+              : "bg-white/90 text-[#171515] opacity-0 group-hover:opacity-100 hover:bg-[#171515] hover:text-white hover:scale-105 shadow-xs"
           }`}
         >
           <Heart className={`w-3.5 h-3.5 ${wishlisted ? "fill-current" : ""}`} />
         </button>
 
-        {/* Bottom Quick-Action Slide-Up Bar (Clean, Tight Typography) */}
+        {/* Bottom Quick-Action Slide-Up Bar */}
         <div className="absolute inset-x-3 bottom-3 translate-y-[calc(100%+16px)] group-hover:translate-y-0 transition-transform duration-300 ease-out flex items-center gap-2">
           <Link
             href={`/product/${slug}`}
             className="flex-1 py-2.5 px-4 rounded-full bg-white/95 hover:bg-[#171515] text-[#171515] hover:text-white text-xs font-poppins font-medium text-center transition-colors shadow-sm"
           >
-            View Item
+            View Piece
           </Link>
           {etsyUrl && (
             <a

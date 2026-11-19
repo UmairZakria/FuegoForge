@@ -9,6 +9,9 @@ import "./globals.css";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import SmoothScroll from "@/components/SmoothScroll";
+import PageLoader from "@/components/PageLoader";
+import FluidCursorCanvas from "@/components/FluidCursorCanvas";
+import { WishlistProvider } from "@/components/WishlistProvider";
 
 const cormorant = Cormorant_Garamond({
   variable: "--next-font-cormorant",
@@ -142,10 +145,14 @@ export default function RootLayout({ children }) {
         />
       </head>
       <body className="min-h-screen flex flex-col bg-[var(--bg-primary)] text-[var(--text-primary)]">
-        <SmoothScroll />
-        <Navbar />
-        <main className="flex-1">{children}</main>
-        <Footer />
+        <WishlistProvider>
+          <PageLoader />
+          <FluidCursorCanvas />
+          <SmoothScroll />
+          <Navbar />
+          <main className="flex-1 relative z-10">{children}</main>
+          <Footer />
+        </WishlistProvider>
       </body>
     </html>
   );
