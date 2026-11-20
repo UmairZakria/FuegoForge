@@ -11,8 +11,8 @@ export default function SplitPortraitGrid() {
   }));
 
   return (
-    <section className="layout-shell pb-[var(--section-gap)]">
-      <div className="relative w-full aspect-square overflow-hidden bg-[var(--bg-primary)]">
+    <section className="layout-shell  pb-[var(--section-gap)]">
+      <div className="relative w-full aspect-square overflow-hidden ">
         {/* Single Optimized Image Layer (replaces 16 duplicate 400% textures) */}
         <img
           src={PORTRAIT_IMAGE}
@@ -40,7 +40,7 @@ export default function SplitPortraitGrid() {
 
         {/* Overlaid Editorial Headline & CTA in Lower-Right Quadrant */}
         <div className="absolute left-[51.5%] top-[53%] right-[3%] z-10 space-y-3 sm:space-y-4 pointer-events-auto">
-          <h2 className="font-editorial text-[clamp(1.35rem,3vw,3.35rem)] font-light text-[#FAF7F2] leading-[1.04] drop-shadow-[0_2px_14px_rgba(23,21,21,0.5)]">
+          <h2 className="font-editorial text-[clamp(1.35rem,4vw,3.55rem)] font-light text-[#FAF7F2] leading-[1.04] drop-shadow-[0_2px_14px_rgba(23,21,21,0.5)]">
             Luxury That <br />
             Moves With Every <br />
             Journey.

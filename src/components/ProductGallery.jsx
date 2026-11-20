@@ -2,6 +2,7 @@
 
 import { useState, useMemo } from "react";
 import { Play } from "lucide-react";
+import DepthHoverImage from "@/components/DepthHoverImage";
 
 export default function ProductGallery({ images = [], videoUrl = "", title = "" }) {
   const mediaItems = useMemo(() => {
@@ -96,6 +97,12 @@ export default function ProductGallery({ images = [], videoUrl = "", title = "" 
             playsInline
             controls
             className="w-full h-full object-cover"
+          />
+        ) : selectedIdx === 0 ? (
+          <DepthHoverImage
+            src={activeItem.src}
+            alt={`${title} - view ${selectedIdx + 1}`}
+            className="w-full h-full object-cover transition-all duration-500 ease-out"
           />
         ) : (
           <img

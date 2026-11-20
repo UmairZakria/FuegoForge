@@ -53,7 +53,7 @@ export default function HomePage() {
           1. ASYMMETRIC EDITORIAL HERO (GSAP Choreographed Reveal)
          ===================================================================== */}
       <HeroReveal>
-        <section className="relative min-h-screen flex flex-col justify-between bg-[#F4EFE6] overflow-hidden">
+        <section className="relative min-h-screen flex flex-col justify-between  overflow-hidden">
           {/* Seamless Full-Canvas Macro Portrait (Left 42% Portrait -> Right 58% Warm Ivory) */}
           <div
             data-hero-portrait="true"
@@ -62,7 +62,7 @@ export default function HomePage() {
             <Parallax speed={0.14} scale={1.08} className="w-full h-full">
               <img
                 data-hero-img="true"
-                src="/hero-editorial.jpg"
+                src="/hero-editorial.png"
                 alt="Fuego Forge Editorial Campaign Portrait"
                 className="w-full h-full object-cover object-[18%_25%] sm:object-[20%_center] lg:object-left will-change-transform"
               />
@@ -217,9 +217,9 @@ export default function HomePage() {
 
         {/* Bottom-Anchored Rounded Ivory Bar (Reference Signature Element) */}
         <div data-hero-bottom-bar="true" className="layout-shell relative z-20">
-          <div className="bg-[#FAF8F4] rounded-t-[20px] border-t border-x border-[var(--border-light)]/70 px-5 sm:px-[clamp(20px,2.5vw,44px)] py-4 md:py-[clamp(16px,1.6vw,24px)] grid grid-cols-1 md:grid-cols-12 gap-3 md:gap-6 items-center">
+          <div className="bg-[var(--burgundy)]/95 text-white rounded-[20px]  px-5 sm:px-[clamp(20px,2.5vw,44px)] py-4 md:py-[clamp(16px,1.6vw,24px)] grid grid-cols-1 md:grid-cols-12 gap-3 md:gap-6 items-center">
             {/* Left: 3-Line Poetic Manifesto */}
-            <div className="hidden sm:block md:col-span-4 text-[11px] font-sans text-[#ACA49B] leading-snug space-y-0.5">
+            <div className="hidden sm:block md:col-span-4 text-[11px] font-sans text-[#bdbab7] leading-snug space-y-0.5">
               <p>made to order.</p>
               <p>fitted in person.</p>
               <p>worn every day after.</p>
@@ -229,7 +229,7 @@ export default function HomePage() {
             <div className="hidden md:flex md:col-span-3 justify-center">
               <a
                 href="#disciplines"
-                className="inline-flex flex-col items-center gap-1 text-[10px] font-sans uppercase tracking-[0.22em] text-[var(--text-primary)] hover:text-[var(--burgundy)] transition-colors"
+                className="inline-flex flex-col items-center gap-1 text-[10px] font-sans uppercase tracking-[0.22em] text-white transition-colors"
               >
                 <ArrowDown className="w-3 h-3" />
                 <span>SCROLL</span>
@@ -245,10 +245,10 @@ export default function HomePage() {
                 <Link
                   key={cat.label}
                   href={cat.href}
-                  className={`text-[length:var(--text-sm)] font-sans tracking-[0.01em] transition-colors pb-0.5 ${
+                  className={`text-[length:var(--text-sm)] font-sans tracking-[0.01em] transition-colors uppercase pb-0.5 ${
                     cat.active
-                      ? "text-[var(--text-primary)] border-b border-[var(--text-primary)] font-normal"
-                      : "text-[#6F675F] hover:text-[var(--burgundy)]"
+                      ? "text-white hover:text-white/80 border-b pb-2 border-white/50 font-normal"
+                      : "text-white/80 pb-2 hover:text-white"
                   }`}
                 >
                   {cat.label}
@@ -314,7 +314,7 @@ export default function HomePage() {
               <span className="text-[length:var(--text-xs)] font-raleway uppercase italic text-[var(--text-muted)] tracking-wide">
                 The Lumina Line
               </span>
-              <h3 className="font-cinzel-decorative text-[clamp(1.5rem,1.5vw,2.25rem)] font-medium text-[var(--text-primary)] leading-[1.1]">
+              <h3 className="font-cinzel text-[clamp(1.5rem,1.5vw,2.25rem)] font-medium text-[var(--text-primary)] leading-[1.1]">
                 Captivating Styles for Everyday
               </h3>
               <div className="pt-1">
@@ -346,7 +346,7 @@ export default function HomePage() {
                 <span className="text-[11px] font-raleway uppercase italic text-[var(--text-muted)] block">
                   The Novara Series
                 </span>
-                <h3 className="font-cinzel-decorative text-[clamp(1.3rem,1.5vw,1.75rem)] font-light text-[var(--text-primary)] leading-tight">
+                <h3 className="font-cinzel-decorative  text-[clamp(1.3rem,1.5vw,1.75rem)] font-normal text-[var(--text-primary)] leading-tight">
                   Sculpted for City Living
                 </h3>
               </div>
