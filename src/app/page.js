@@ -58,36 +58,38 @@ export default function HomePage() {
           {/* Seamless Full-Canvas Macro Portrait (Left 42% Portrait -> Right 58% Warm Ivory) */}
           <div
             data-hero-portrait="true"
-            className="relative lg:absolute lg:inset-0 w-full h-[46vh] min-h-[300px] sm:h-[58vh] lg:h-full overflow-hidden select-none pointer-events-none"
+            className="relative shrink-0 lg:absolute lg:inset-0 w-full h-[70vh] min-h-[420px] sm:h-[72vh] lg:h-full overflow-hidden select-none pointer-events-none"
           >
-            <Parallax speed={0.14} scale={1.08} className="w-full h-full">
+            <Parallax speed={0.14} scale={1} className="w-full h-full">
               <HeroFluidSlideshow
                 images={["/hero-editorial.png", "/hero2_transparent.png"]}
                 alt="Fuego Forge Editorial Campaign Portrait"
-                intervalMs={3500}
+                intervalMs={9500}
                 transitionMs={2350}
-                gridRows={9}
+                gridRows={12}
                 objectPosition={[0, 0.5]}
                 strength={0.26}
                 className="w-full h-full"
-                imgClassName="object-[18%_25%] sm:object-[20%_center] lg:object-left will-change-transform"
+                imgClassName="object-left will-change-transform"
               />
             </Parallax>
-            {/* Subtle bottom fade on mobile so text below reads effortlessly */}
-            <div className="lg:hidden absolute inset-x-0 bottom-0 h-20 bg-gradient-to-t from-[#F4EFE6] via-[#F4EFE6]/70 to-transparent" />
+            {/* Seamless bottom ivory fade on mobile so the overlaid headline reads effortlessly */}
+            <div className="lg:hidden absolute inset-x-0 bottom-0 h-44 bg-gradient-to-t from-[#F2EDE5] via-[#F2EDE5]/80 via-40% to-transparent" />
           </div>
 
           {/* Main Layered Editorial Stage */}
-          <div className="layout-shell relative z-10 flex-1 flex flex-col justify-between pt-3 sm:pt-6 lg:pt-[clamp(76px,8vw,116px)] pb-5 lg:pb-[clamp(20px,2.2vw,36px)] gap-5 lg:gap-8">
+          <div className="layout-shell relative z-10 flex-1 flex flex-col justify-between -mt-42  md:mt-0 pt-0 lg:pt-[clamp(76px,8vw,116px)] pb-5 lg:pb-[clamp(20px,2.2vw,36px)] gap-5 lg:gap-8">
             {/* Middle Stage: Oversized Layered Serif Headline + Right Editorial Manifesto */}
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 lg:gap-8 items-center my-auto pt-0 lg:pt-10">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 lg:gap-8 items-center my-auto pt-0 lg:pt-10">
               {/* Oversized Multi-Tone Serif Headline Overlapping Portrait & Warm Ivory */}
               <Parallax speed={-0.06} className="lg:col-span-9">
-                <h1 className="font-editorial text-[clamp(2.15rem,8.8vw,3.5rem)] lg:text-[clamp(2.5rem,5.9vw,7.1rem)] leading-[0.95] lg:leading-[0.94] font-light uppercase tracking-[-0.02em] select-none">
+                <h1 className="font-cinzel text-[clamp(2.2rem,9.2vw,3.6rem)] lg:text-[clamp(2.5rem,5.9vw,7.1rem)] leading-[0.95] lg:leading-[0.94] font-light uppercase select-none">
                   <span className="block overflow-hidden">
                     <span data-hero-line="true" className="block">
                       <span className="text-[#6E2628]">NOT FOR</span>{" "}
-                      <span className="text-[#C5BEB5] font-extralight">SOMEDAY</span>
+                      <span className="text-[#8F877E] lg:text-[#C5BEB5] font-extralight">
+                        SOMEDAY
+                      </span>
                     </span>
                   </span>
                   <span className="block overflow-hidden mt-1">
@@ -104,10 +106,10 @@ export default function HomePage() {
               {/* Right-Aligned Supporting Editorial Copy & Minimal CTA */}
               <div
                 data-hero-fade="true"
-                className="lg:col-span-3 lg:text-right flex flex-col lg:items-end justify-between space-y-3 lg:space-y-6 lg:pt-4"
+                className="lg:col-span-3 lg:text-right flex flex-row items-end justify-between gap-4 lg:flex-col lg:items-end lg:space-y-6 lg:pt-4"
               >
-              <div className="space-y-1 max-w-[30ch] lg:ml-auto">
-                <span className="text-[11px] font-cinzel-decorative uppercase tracking-[0.22em] text-[#ACA49B] block">
+              <div className="space-y-1 max-w-[26ch] lg:max-w-[30ch] lg:ml-auto">
+                <span className="text-[11px] font-cinzel-decorative uppercase tracking-[0.22em] text-[#8E867E] lg:text-[#ACA49B] block">
                   FUEGO FORGE
                 </span>
                 <p className="font-raleway text-[length:var(--text-sm)] text-[#6F675F] font-light leading-relaxed">
@@ -117,7 +119,7 @@ export default function HomePage() {
                 </p>
               </div>
 
-              <div className="pt-1 lg:pt-8">
+              <div className="pt-1 lg:pt-8 shrink-0">
                 <a
                   href="https://fuegoforge.etsy.com?ref=share_and_save"
                   target="_blank"
@@ -160,12 +162,12 @@ export default function HomePage() {
                   <div className="absolute inset-0 bg-gradient-to-t from-black/55 via-transparent to-black/25" />
 
                   <div className="absolute inset-0 p-3.5 flex flex-col justify-between text-[#FAF7F2]">
-                    <span className="text-[11px] font-poppins  tracking-[0.02em] text-[#FAF7F2]/95">
+                    <span className="text-[11px] uppercase font-poppins  tracking-[0.02em] text-[#FAF7F2]/95">
                       Earrings
                     </span>
 
-                    <div className="flex items-end justify-between gap-2">
-                      <span className="text-[11px] font-poppins italic font-light text-[#FAF7F2]/90 leading-tight">
+                    <div className="flex items-end justify-end md:justify-between gap-2">
+                      <span className="text-[11px] md:visible hidden font-poppins italic font-light text-[#FAF7F2]/90 leading-tight">
                         many, worn as one
                       </span>
                       <span className="inline-flex items-center gap-1 text-[11px] font-sans text-[#FAF7F2] group-hover:translate-x-0.5 transition-transform shrink-0">
@@ -200,12 +202,12 @@ export default function HomePage() {
                   <div className="absolute inset-0 bg-gradient-to-t from-black/55 via-transparent to-black/25" />
 
                   <div className="absolute inset-0 p-3.5 flex flex-col justify-between text-[#FAF7F2]">
-                    <span className="text-[11px] font-sans tracking-[0.02em] text-[#FAF7F2]/95">
+                    <span className="text-[11px] uppercase   font-sans tracking-[0.02em] text-[#FAF7F2]/95">
                       Necklace
                     </span>
 
-                    <div className="flex items-end justify-between gap-2">
-                      <span className="text-[11px] font-poppins italic font-light text-[#FAF7F2]/90 leading-tight ">
+                    <div className="flex items-end justify-start md:justify-between gap-2">
+                      <span className="text-[11px] md:visible hidden font-poppins italic font-light text-[#FAF7F2]/90 leading-tight ">
                         a single stone, close to the skin
                       </span>
                       <span className="inline-flex items-center gap-1 text-[11px] font-sans text-[#FAF7F2] group-hover:translate-x-0.5 transition-transform shrink-0">
