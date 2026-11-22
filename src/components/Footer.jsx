@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { ArrowRight, ArrowUpRight, ExternalLink } from "lucide-react";
-import SmartVideo from "@/components/SmartVideo";
+import FluidHoverVideo from "@/components/FluidHoverVideo";
 
 export default function Footer() {
   const [email, setEmail] = useState("");
@@ -23,10 +23,13 @@ export default function Footer() {
           1. FULL-BLEED CINEMATIC BACKGROUND VIDEO (/Footer-BG.mp4)
          ===================================================================== */}
       <div className="absolute inset-0 select-none pointer-events-none">
-        <SmartVideo
+        <FluidHoverVideo
           src="/Footer-BG.mp4"
           preload="none"
-          className="w-full h-full object-cover object-[58%_22%] scale-[1.01]"
+          objectPosition={[0.58, 0.22]}
+          strength={0.26}
+          className="w-full h-full scale-[1.01]"
+          videoClassName="w-full h-full object-cover object-[58%_22%]"
         />
         {/* Directional Editorial Scrims: Preserves the model in center-right while grounding left & bottom text */}
         <div className="absolute inset-0 bg-gradient-to-r from-[#120F0E]/88 via-[#120F0E]/42 to-[#120F0E]/20" />
@@ -213,9 +216,25 @@ export default function Footer() {
             </span>
           </div>
 
-          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 pt-2 text-[11px] text-white/75 font-poppins tracking-[0.16em] uppercase">
-            <p>© 2026 FUEGO FORGE. All Rights Reserved.</p>
-            <p>Contemporary Joaillerie • Handcrafted to Live In</p>
+          <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-3 pt-2 text-[11px] text-white/75 font-poppins">
+            <p className="tracking-[0.16em] uppercase">© 2026 FUEGO FORGE. All Rights Reserved.</p>
+            <p className="tracking-[0.16em] uppercase">Contemporary Joaillerie • Handcrafted to Live In</p>
+            <a
+              href="https://umairzakria.vercel.app/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-baseline gap-1.5 text-xs tracking-normal normal-case text-white/55 hover:text-white/85 transition-colors group"
+            >
+              <span>Made by Umair at</span>
+              <span className="inline-flex items-baseline gap-0.5 text-[15px] leading-none">
+                <span className="font-semibold text-white group-hover:text-white tracking-tight">
+                  .umair
+                </span>
+                <span className="font-light text-[#A78BFA] group-hover:text-[#C4B5FD] transition-colors">
+                  lab
+                </span>
+              </span>
+            </a>
           </div>
         </div>
       </div>

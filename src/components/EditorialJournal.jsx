@@ -1,4 +1,5 @@
 import Parallax from "@/components/Parallax";
+import FluidHoverImage from "@/components/FluidHoverImage";
 
 const JOURNAL_STORIES = [
   {
@@ -58,15 +59,15 @@ export default function EditorialJournal() {
 
             <div className="relative aspect-[3/4] rounded-[10px] overflow-hidden bg-[var(--bg-secondary)]">
               <Parallax speed={0.05} scale={1.06} className="w-full h-full">
-                <img
+                <FluidHoverImage
                   src={story.image}
                   alt={story.alt}
-                  loading="lazy"
-                  className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-700 ease-out"
+                  className="w-full h-full"
+                  imgClassName="group-hover:scale-105 transition-transform duration-700 ease-out"
                 />
               </Parallax>
 
-              <span className="absolute bottom-3 left-3 px-3 py-1 rounded-full bg-[var(--burgundy)] text-[#FAF7F2] text-[10px] font-poppins tracking-[0.05em]">
+              <span className="absolute bottom-3 left-3 px-3 py-1 rounded-full bg-[var(--burgundy)] text-[#FAF7F2] text-[10px] font-poppins tracking-[0.05em] pointer-events-none">
                 {story.readTime}
               </span>
             </div>

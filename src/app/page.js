@@ -8,6 +8,7 @@ import EditorialJournal from "@/components/EditorialJournal";
 import Parallax from "@/components/Parallax";
 import SmartVideo from "@/components/SmartVideo";
 import HeroReveal from "@/components/HeroReveal";
+import HeroFluidSlideshow from "@/components/HeroFluidSlideshow";
 import { ArrowRight, ArrowDown, ArrowUpRight, ChevronRight } from "lucide-react";
 
 export const metadata = {
@@ -60,11 +61,16 @@ export default function HomePage() {
             className="relative lg:absolute lg:inset-0 w-full h-[46vh] min-h-[300px] sm:h-[58vh] lg:h-full overflow-hidden select-none pointer-events-none"
           >
             <Parallax speed={0.14} scale={1.08} className="w-full h-full">
-              <img
-                data-hero-img="true"
-                src="/hero-editorial.png"
+              <HeroFluidSlideshow
+                images={["/hero-editorial.png", "/hero2_transparent.png"]}
                 alt="Fuego Forge Editorial Campaign Portrait"
-                className="w-full h-full object-cover object-[18%_25%] sm:object-[20%_center] lg:object-left will-change-transform"
+                intervalMs={3500}
+                transitionMs={2350}
+                gridRows={9}
+                objectPosition={[0, 0.5]}
+                strength={0.26}
+                className="w-full h-full"
+                imgClassName="object-[18%_25%] sm:object-[20%_center] lg:object-left will-change-transform"
               />
             </Parallax>
             {/* Subtle bottom fade on mobile so text below reads effortlessly */}

@@ -29,12 +29,38 @@ export default function Navbar() {
   const headerRef = useRef(null);
   const logoRef = useRef(null);
   const rightNavRef = useRef(null);
+  const searchInputRef = useRef(null);
   const { items: wishlistItems, setIsOpen: setIsWishlistOpen } = useWishlist();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [isLogoOnDark, setIsLogoOnDark] = useState(pathname === "/");
   const [isRightNavOnDark, setIsRightNavOnDark] = useState(false);
+
+  // Focus search input on open & close on Escape / outside click
+  useEffect(() => {
+    if (!isSearchOpen) return;
+    const focusTimer = window.setTimeout(() => {
+      searchInputRef.current?.focus();
+    }, 120);
+
+    const handleKeyDown = (e) => {
+      if (e.key === "Escape") setIsSearchOpen(false);
+    };
+    const handlePointerDown = (e) => {
+      if (headerRef.current && !headerRef.current.contains(e.target)) {
+        setIsSearchOpen(false);
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    window.addEventListener("pointerdown", handlePointerDown);
+    return () => {
+      window.clearTimeout(focusTimer);
+      window.removeEventListener("keydown", handleKeyDown);
+      window.removeEventListener("pointerdown", handlePointerDown);
+    };
+  }, [isSearchOpen]);
 
   useEffect(() => {
     let rafId = 0;
@@ -90,9 +116,8 @@ export default function Navbar() {
     };
   }, [pathname]);
 
-  const handleSearchSubmit = (e) => {
-    e.preventDefault();
-    const trimmed = searchQuery.trim();
+  const triggerSearch = (query) => {
+    const trimmed = query.trim();
     setIsSearchOpen(false);
     setIsMobileMenuOpen(false);
     if (trimmed) {
@@ -100,6 +125,11 @@ export default function Navbar() {
     } else {
       router.push("/#creations");
     }
+  };
+
+  const handleSearchSubmit = (e) => {
+    e.preventDefault();
+    triggerSearch(searchQuery);
   };
 
   return (
@@ -112,12 +142,16 @@ export default function Navbar() {
             <button
               type="button"
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className={`lg:hidden p-1.5 -ml-1 hover:text-[#9E2A30] transition-colors duration-300 cursor-pointer shrink-0 ${
-                isLogoOnDark ? "text-white" : "text-black"
+              className={`lg:hidden p-1.5 -ml-1 rounded-full transition-all duration-300 active:scale-90 hover:scale-105 cursor-pointer shrink-0 ${
+                isLogoOnDark
+                  ? "text-white hover:bg-white/10"
+                  : "text-black hover:bg-black/5 hover:text-[#9E2A30]"
               }`}
               aria-label="Toggle Navigation Menu"
             >
-              {isMobileMenuOpen ? <X className="w-4 h-4" /> : <Menu className="w-4 h-4" />}
+              <span className="block transition-transform duration-300">
+                {isMobileMenuOpen ? <X className="w-4 h-4" /> : <Menu className="w-4 h-4" />}
+              </span>
             </button>
 
             <Link ref={logoRef} href="/" className="font-raleway shrink-0">
@@ -165,35 +199,46 @@ export default function Navbar() {
               ))}
             </nav>
 
-            <div className="flex items-center gap-1.5 sm:gap-2">
+            <div className="flex items-center gap-1 sm:gap-1.5">
               {/* Search Toggle */}
               <button
                 type="button"
-                onClick={() => setIsSearchOpen(!isSearchOpen)}
-                className={`p-2 transition-colors duration-300 cursor-pointer ${
-                  isRightNavOnDark
-                    ? "text-white hover:text-[#E0535C]"
-                    : "text-[var(--text-primary)] hover:text-[#9E2A30]"
+                onClick={() => setIsSearchOpen((prev) => !prev)}
+                className={`p-2 rounded-full transition-all duration-300 hover:scale-110 active:scale-90 cursor-pointer ${
+                  isSearchOpen
+                    ? "bg-[#171515] text-white"
+                    : isRightNavOnDark
+                      ? "text-white hover:bg-white/10 hover:text-[#E0535C]"
+                      : "text-[var(--text-primary)] hover:bg-black/5 hover:text-[#9E2A30]"
                 }`}
                 aria-label="Search Archive"
+                aria-expanded={isSearchOpen}
               >
-                {isSearchOpen ? <X className="w-3.5 h-3.5" /> : <Search className="w-3.5 h-3.5" />}
+                <span
+                  className={`block transition-transform duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] ${
+                    isSearchOpen ? "rotate-90" : "rotate-0"
+                  }`}
+                >
+                  {isSearchOpen ? <X className="w-3.5 h-3.5" /> : <Search className="w-3.5 h-3.5" />}
+                </span>
               </button>
 
               {/* Saved Pieces (Wishlist Drawer Trigger) */}
               <button
                 type="button"
                 onClick={() => setIsWishlistOpen(true)}
-                className={`p-2 transition-colors duration-300 relative cursor-pointer ${
+                className={`p-2 rounded-full transition-all duration-300 hover:scale-110 active:scale-90 relative cursor-pointer ${
                   isRightNavOnDark
-                    ? "text-white hover:text-[#E0535C]"
-                    : "text-[var(--text-primary)] hover:text-[#9E2A30]"
+                    ? "text-white hover:bg-white/10 hover:text-[#E0535C]"
+                    : "text-[var(--text-primary)] hover:bg-black/5 hover:text-[#9E2A30]"
                 }`}
                 aria-label="Open Saved Pieces"
                 title="Saved Pieces"
               >
                 <Heart
-                  className={`w-3.5 h-3.5 ${wishlistItems.length > 0 ? "fill-[#9E2A30] text-[#9E2A30]" : ""}`}
+                  className={`w-3.5 h-3.5 transition-transform duration-300 ${
+                    wishlistItems.length > 0 ? "fill-[#9E2A30] text-[#9E2A30]" : ""
+                  }`}
                 />
                 {wishlistItems.length > 0 && (
                   <span className="absolute -top-0.5 -right-0.5 min-w-[15px] h-[15px] px-1 rounded-full bg-[#9E2A30] text-white text-[9px] font-poppins font-semibold flex items-center justify-center leading-none">
@@ -207,10 +252,10 @@ export default function Navbar() {
                 href="https://fuegoforge.etsy.com?ref=share_and_save"
                 target="_blank"
                 rel="noopener noreferrer"
-                className={`p-2 transition-colors duration-300 relative ${
+                className={`p-2 rounded-full transition-all duration-300 hover:scale-110 active:scale-90 relative ${
                   isRightNavOnDark
-                    ? "text-white hover:text-[#E0535C]"
-                    : "text-[var(--text-primary)] hover:text-[#9E2A30]"
+                    ? "text-white hover:bg-white/10 hover:text-[#E0535C]"
+                    : "text-[var(--text-primary)] hover:bg-black/5 hover:text-[#9E2A30]"
                 }`}
                 aria-label="Open Etsy Shopping Bag"
                 title="Shop Direct on Etsy (50% Off Applied)"
@@ -224,45 +269,89 @@ export default function Navbar() {
                 href="https://fuegoforge.etsy.com?ref=share_and_save"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="hidden sm:inline-flex items-center gap-2 px-4 sm:px-5 py-2 bg-[var(--bg-dark)] hover:bg-[#9E2A30] text-[var(--bg-primary)] text-[11px] font-poppins tracking-[0.02em] transition-all duration-300 whitespace-nowrap"
+                className="group hidden sm:inline-flex items-center gap-2 ml-1 px-4 sm:px-5 py-2 bg-[var(--bg-dark)] hover:bg-[#9E2A30] text-[var(--bg-primary)] text-[11px] font-poppins tracking-[0.02em] transition-all duration-300 active:scale-95 whitespace-nowrap"
                 style={{
                   clipPath:
                     "polygon(0 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%)",
                 }}
               >
                 <span>Shop Boutique</span>
-                <ArrowRight className="w-3 h-3" />
+                <ArrowRight className="w-3 h-3 transition-transform duration-300 group-hover:translate-x-1" />
               </a>
             </div>
           </div>
         </div>
 
-        {/* Expandable Search Drawer */}
-        {isSearchOpen && (
-          <div className="pointer-events-auto mt-2 rounded-[10px] border border-[var(--border-light)] bg-[var(--bg-card)]/95 backdrop-blur-xl shadow-lg">
-            <form onSubmit={handleSearchSubmit} className="px-5 py-3 flex items-center gap-3">
-              <Search className="w-4 h-4 text-[var(--text-muted)] shrink-0" />
-              <input
-                type="text"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Search handcrafted earrings, necklaces, vintage hairpins, rings..."
-                autoFocus
-                className="w-full bg-transparent text-[length:var(--text-body)] text-[var(--text-primary)] placeholder:text-[var(--text-muted)] focus:outline-none"
-              />
+        {/* Minimal Transparent Animated Search Bar */}
+        <div
+          aria-hidden={!isSearchOpen}
+          className={`ml-auto mt-1.5 w-full max-w-sm origin-top-right transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] ${
+            isSearchOpen
+              ? "pointer-events-auto opacity-100 translate-y-0 scale-100"
+              : "pointer-events-none opacity-0 -translate-y-2 scale-95"
+          }`}
+        >
+          <form
+            onSubmit={handleSearchSubmit}
+            className={`flex items-center gap-2 p-1.5 pl-4 rounded-full backdrop-blur-md border transition-colors ${
+              isRightNavOnDark
+                ? "bg-black/35 border-white/25 text-white"
+                : "bg-white/30 border-[#171515]/20 text-[#171515]"
+            }`}
+          >
+            <Search
+              className={`w-3.5 h-3.5 shrink-0 ${
+                isRightNavOnDark ? "text-white/70" : "text-[#171515]/60"
+              }`}
+            />
+            <input
+              ref={searchInputRef}
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="Search pieces..."
+              tabIndex={isSearchOpen ? 0 : -1}
+              className={`w-full bg-transparent text-xs font-poppins focus:outline-none ${
+                isRightNavOnDark
+                  ? "text-white placeholder:text-white/60"
+                  : "text-[#171515] placeholder:text-[#171515]/55"
+              }`}
+            />
+            {searchQuery && (
               <button
-                type="submit"
-                className="px-5 py-2 rounded-full bg-[var(--bg-dark)] text-[var(--bg-primary)] hover:bg-[#9E2A30] text-xs font-poppins font-medium transition-colors shrink-0 cursor-pointer"
+                type="button"
+                onClick={() => setSearchQuery("")}
+                tabIndex={isSearchOpen ? 0 : -1}
+                className={`p-1 transition-colors cursor-pointer ${
+                  isRightNavOnDark
+                    ? "text-white/70 hover:text-white"
+                    : "text-[#171515]/55 hover:text-[#171515]"
+                }`}
+                aria-label="Clear search query"
               >
-                Search
+                <X className="w-3 h-3" />
               </button>
-            </form>
-          </div>
-        )}
+            )}
+            <button
+              type="submit"
+              tabIndex={isSearchOpen ? 0 : -1}
+              className="px-4 py-1.5 rounded-full bg-[#171515] hover:bg-[#9E2A30] text-white text-[11px] font-poppins font-medium transition-all duration-200 active:scale-95 shrink-0 cursor-pointer"
+            >
+              Search
+            </button>
+          </form>
+        </div>
 
-        {/* Mobile Editorial Navigation Drawer */}
-        {isMobileMenuOpen && (
-          <div className="pointer-events-auto lg:hidden mt-2 rounded-[10px] border border-[var(--border-light)] bg-[var(--bg-card)]/95 backdrop-blur-xl p-5 space-y-4 shadow-lg">
+        {/* Animated Mobile Editorial Navigation Drawer */}
+        <div
+          aria-hidden={!isMobileMenuOpen}
+          className={`lg:hidden origin-top transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] overflow-hidden ${
+            isMobileMenuOpen
+              ? "mt-2 max-h-[420px] pointer-events-auto opacity-100 translate-y-0 scale-100"
+              : "mt-0 max-h-0 pointer-events-none opacity-0 -translate-y-2 scale-[0.98]"
+          }`}
+        >
+          <div className="rounded-[12px] border border-[var(--border-light)] bg-[var(--bg-card)]/95 backdrop-blur-xl p-5 space-y-4 shadow-lg">
             <div className="flex flex-wrap gap-4 pb-3 border-b border-[var(--border-light)]">
               {EDITORIAL_NAV.map((item) => (
                 <Link
@@ -282,7 +371,7 @@ export default function Navbar() {
                   key={cat.name}
                   href={cat.href}
                   onClick={() => setIsMobileMenuOpen(false)}
-                  className="flex items-center justify-between text-xs font-poppins font-medium text-[var(--text-primary)] hover:text-[#9E2A30] py-2.5 px-3.5 rounded-[8px] border border-[var(--border-light)] bg-[var(--bg-primary)] transition-colors"
+                  className="flex items-center justify-between text-xs font-poppins font-medium text-[var(--text-primary)] hover:text-[#9E2A30] py-2.5 px-3.5 rounded-[8px] border border-[var(--border-light)] bg-[var(--bg-primary)] transition-all duration-200 active:scale-[0.98]"
                 >
                   <span>{cat.name}</span>
                   <ArrowRight className="w-3 h-3 text-[var(--text-muted)]" />
@@ -290,7 +379,7 @@ export default function Navbar() {
               ))}
             </div>
           </div>
-        )}
+        </div>
       </div>
     </header>
   );

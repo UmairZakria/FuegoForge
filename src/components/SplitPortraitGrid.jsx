@@ -1,4 +1,5 @@
 import { ArrowUpRight } from "lucide-react";
+import FluidHoverImage from "@/components/FluidHoverImage";
 
 const PORTRAIT_IMAGE =
   "https://images.unsplash.com/photo-1596944924616-7b38e7cfac36?auto=format&fit=crop&w=1400&q=82";
@@ -13,13 +14,12 @@ export default function SplitPortraitGrid() {
   return (
     <section className="layout-shell  pb-[var(--section-gap)]">
       <div className="relative w-full aspect-square overflow-hidden ">
-        {/* Single Optimized Image Layer (replaces 16 duplicate 400% textures) */}
-        <img
+        {/* Single Optimized Image Layer with Lusion Liquid Hover */}
+        <FluidHoverImage
           src={PORTRAIT_IMAGE}
           alt="Fuego Forge Editorial Portrait"
-          loading="lazy"
-          decoding="async"
-          className="absolute inset-0 w-full h-full object-cover object-center select-none pointer-events-none"
+          className="absolute inset-0 w-full h-full select-none"
+          strength={0.32}
         />
 
         {/* 4x4 Rounded-Window Cutout Grid Mask */}

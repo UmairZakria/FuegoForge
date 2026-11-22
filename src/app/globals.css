@@ -112,20 +112,23 @@ body {
   padding-block: var(--section-gap);
 }
 
-/* Fluid Multi-Column Product Grid */
+/* Fluid Multi-Column Product Grid (2 mobile / 3 tablet / 4 desktop) */
 .fluid-product-grid {
   display: grid;
-  gap: var(--grid-gap);
-  grid-template-columns: repeat(
-    auto-fill,
-    minmax(clamp(240px, 17vw, 350px), 1fr)
-  );
+  gap: 14px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
-@media (max-width: 639px) {
+@media (min-width: 640px) {
   .fluid-product-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 14px;
+    gap: var(--grid-gap);
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 1024px) {
+  .fluid-product-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
   }
 }
 

@@ -2,7 +2,7 @@
 
 import { useState, useMemo } from "react";
 import { useSearchParams } from "next/navigation";
-import { Search, X } from "lucide-react";
+import { Search, X, ChevronDown } from "lucide-react";
 import ProductCard from "@/components/ProductCard";
 
 export default function CatalogExplorer({ products, categories }) {
@@ -98,20 +98,19 @@ function CatalogExplorerInner({ products, categories, initialQuery }) {
             </div>
 
             {/* Sort Select */}
-            <select
-              value={sortBy}
-              onChange={(e) => setSortBy(e.target.value)}
-              aria-label="Sort products"
-              className="px-4 py-2 rounded-full border border-[var(--border-strong)] bg-[var(--bg-card)] text-xs font-poppins font-medium text-[var(--text-primary)] focus:outline-none focus:border-[#171515] cursor-pointer"
-            >
-              <option value="featured">Sort: Featured</option>
-              <option value="price-asc">Price: Low to High</option>
-              <option value="price-desc">Price: High to Low</option>
-            </select>
-
-            <span className="text-xs font-poppins text-[var(--text-muted)] hidden sm:inline-block ml-1">
-              {filteredProducts.length} / {products.length}
-            </span>
+            <div className="relative">
+              <select
+                value={sortBy}
+                onChange={(e) => setSortBy(e.target.value)}
+                aria-label="Sort products"
+                className="appearance-none pl-4 pr-9 py-2 rounded-full border border-[var(--border-strong)] bg-[var(--bg-card)] text-xs font-poppins font-medium text-[var(--text-primary)] focus:outline-none focus:border-[#171515] cursor-pointer"
+              >
+                <option value="featured">Sort: Featured</option>
+                <option value="price-asc">Price: Low to High</option>
+                <option value="price-desc">Price: High to Low</option>
+              </select>
+              <ChevronDown className="w-3.5 h-3.5 text-[var(--text-secondary)] absolute right-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+            </div>
           </div>
         </div>
 
