@@ -96,6 +96,9 @@ export const metadata = {
   },
   verification: {
     google: "8wGp0LK0OoBkJ7Fl2FqjwGqDIffdtCFYbCaVbUybDOk",
+    other: {
+      "msvalidate.01": "6D422D6AB8E398C636824B271D643549",
+    },
   },
   robots: {
     index: true,

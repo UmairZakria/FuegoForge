@@ -15,11 +15,28 @@ export default function SmoothScroll() {
       anchors: true,
     });
 
+    window.__ffLenis = lenis;
+
+    // Keep Lenis locked while the preloader curtain is active
+    if (!window.__ffPreloaderDone) {
+      lenis.stop();
+    }
+
+    const handlePreloaderDone = () => {
+      lenis.scrollTo(0, { immediate: true });
+      lenis.start();
+    };
+
+    window.addEventListener("ff:preloader-done", handlePreloaderDone);
+
     return () => {
+      window.removeEventListener("ff:preloader-done", handlePreloaderDone);
+      if (window.__ffLenis === lenis) {
+        delete window.__ffLenis;
+      }
       lenis.destroy();
     };
   }, []);
 
   return null;
 }
-

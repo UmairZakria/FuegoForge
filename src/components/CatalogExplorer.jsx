@@ -1,8 +1,9 @@
 "use client";
 
 import { useState, useMemo } from "react";
+import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { Search, X, ChevronDown } from "lucide-react";
+import { Search, X, ChevronDown, ChevronRight } from "lucide-react";
 import ProductCard from "@/components/ProductCard";
 
 export default function CatalogExplorer({ products, categories }) {
@@ -48,6 +49,19 @@ function CatalogExplorerInner({ products, categories, initialQuery }) {
     }
     return list;
   }, [products, selectedCategory, searchQuery, sortBy]);
+
+  const showMobileCategoryShelves =
+    selectedCategory === "all" && searchQuery.trim() === "";
+
+  const groupedByCategory = useMemo(() => {
+    if (!showMobileCategoryShelves) return [];
+    return categories
+      .map((cat) => ({
+        ...cat,
+        items: filteredProducts.filter((p) => p.category === cat.slug),
+      }))
+      .filter((group) => group.items.length > 0);
+  }, [categories, filteredProducts, showMobileCategoryShelves]);
 
   const hasActiveFilters =
     selectedCategory !== "all" || searchQuery.trim() !== "" || sortBy !== "featured";
@@ -157,13 +171,65 @@ function CatalogExplorerInner({ products, categories, initialQuery }) {
         </div>
       </div>
 
-      {/* Full-Width Fluid Product Grid (No Sidebar) */}
+      {/* Products: Categorized Swipe Shelves on Mobile (All View) + 4-Column Grid on Desktop */}
       {filteredProducts.length > 0 ? (
-        <div className="fluid-product-grid">
-          {filteredProducts.map((product) => (
-            <ProductCard key={product.id} product={product} />
-          ))}
-        </div>
+        showMobileCategoryShelves ? (
+          <>
+            {/* Mobile Categorized Horizontal Swipe Shelves */}
+            <div className="md:hidden space-y-8">
+              {groupedByCategory.map((group) => (
+                <div key={group.slug} className="space-y-3">
+                  {/* Category Shelf Header */}
+                  <div className="flex items-center justify-between gap-3">
+                    <div className="flex items-baseline gap-2 min-w-0">
+                      <h3 className="font-editorial text-2xl font-normal uppercase tracking-[-0.01em] text-[#171515] truncate">
+                        {group.name}
+                      </h3>
+                      <span className="text-[11px] font-poppins text-[var(--text-muted)] shrink-0">
+                        ({group.items.length})
+                      </span>
+                    </div>
+
+                    <Link
+                      href={`/category/${group.slug}`}
+                      className="inline-flex items-center gap-0.5 text-xs font-poppins font-medium text-[#9E2A30] hover:text-[#171515] transition-colors shrink-0"
+                    >
+                      <span>See all</span>
+                      <ChevronRight className="w-3.5 h-3.5" />
+                    </Link>
+                  </div>
+
+                  {/* Edge-to-Edge Horizontal Swipe Track (2 cards + peek of 3rd) */}
+                  <div className="-mx-[var(--page-gutter)] px-[var(--page-gutter)] flex gap-3 overflow-x-auto snap-x snap-mandatory scroll-smooth pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+                    {group.items.map((product) => (
+                      <div
+                        key={product.id}
+                        className="shrink-0 w-[46%] sm:w-[34%] snap-start"
+                      >
+                        <ProductCard product={product} />
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* Desktop Full-Width 4-Column Grid */}
+            <div className="hidden md:block">
+              <div className="fluid-product-grid">
+                {filteredProducts.map((product) => (
+                  <ProductCard key={product.id} product={product} />
+                ))}
+              </div>
+            </div>
+          </>
+        ) : (
+          <div className="fluid-product-grid">
+            {filteredProducts.map((product) => (
+              <ProductCard key={product.id} product={product} />
+            ))}
+          </div>
+        )
       ) : (
         <div className="bg-[var(--bg-card)] rounded-[14px] border border-[var(--border-light)] p-12 text-center space-y-4">
           <p className="font-editorial text-2xl text-[var(--text-primary)]">

@@ -145,7 +145,7 @@ function loadImage(src) {
 }
 
 export default function HeroFluidSlideshow({
-  images = ["/hero-editorial.png", "/hero2_transparent.jpg"],
+  images = ["/hero-editorial.webp", "/hero2_transparent.webp"],
   alt = "Fuego Forge Editorial Campaign Portrait",
   intervalMs = 5500,
   transitionMs = 1350,
@@ -185,7 +185,15 @@ export default function HeroFluidSlideshow({
 
     const canHover = window.matchMedia("(hover: hover) and (pointer: fine)").matches;
     const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    if (!canHover || reducedMotion) return;
+    if (reducedMotion) {
+      loadImage(src0)
+        .then((img) => (img.decode ? img.decode().catch(() => {}) : undefined))
+        .finally(() => {
+          window.__ffHeroReady = true;
+          window.dispatchEvent(new CustomEvent("ff:hero-ready"));
+        });
+      return;
+    }
 
     const gl = canvas.getContext("webgl", {
       alpha: true,
@@ -447,51 +455,77 @@ export default function HeroFluidSlideshow({
       lastGy = gy;
     };
 
-    window.addEventListener("pointermove", handleWinMove, { passive: true });
+    if (canHover) {
+      window.addEventListener("pointermove", handleWinMove, { passive: true });
+    }
 
     let intervalId = null;
 
-    Promise.all([loadImage(src0), loadImage(src1)])
-      .then(([imgA, imgB]) => {
+    // Load & paint primary hero image immediately so preloader can reveal without waiting on slide 2
+    loadImage(src0)
+      .then((imgA) => {
         if (disposed) return;
 
+        const aspectA = (imgA.naturalWidth || 1) / Math.max(imgA.naturalHeight || 1, 1);
         gl.activeTexture(gl.TEXTURE1);
         gl.bindTexture(gl.TEXTURE_2D, texA);
         gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, imgA);
-        gl.uniform1f(uAspectALoc, (imgA.naturalWidth || 1) / Math.max(imgA.naturalHeight || 1, 1));
+        gl.uniform1f(uAspectALoc, aspectA);
 
+        // Bind imgA to texB temporarily so shader is always valid before slide 2 arrives
         gl.activeTexture(gl.TEXTURE2);
         gl.bindTexture(gl.TEXTURE_2D, texB);
-        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, imgB);
-        gl.uniform1f(uAspectBLoc, (imgB.naturalWidth || 1) / Math.max(imgB.naturalHeight || 1, 1));
+        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, imgA);
+        gl.uniform1f(uAspectBLoc, aspectA);
 
         ready = true;
         resize();
         drawScene();
         setWebglReady(true);
-        window.requestAnimationFrame(() => drawScene());
+        window.requestAnimationFrame(() => {
+          drawScene();
+          window.__ffHeroReady = true;
+          window.dispatchEvent(new CustomEvent("ff:hero-ready"));
+        });
 
-        // Trigger big square pixel transition automatically every few seconds
+        // Load second hero slide in background for the square-pixel slideshow
         if (src0 !== src1) {
-          intervalId = window.setInterval(() => {
-            if (document.hidden) return;
-            transFrom = progress;
-            targetProgress = targetProgress < 0.5 ? 1.0 : 0.0;
-            transStart = performance.now();
-            isTransitioning = true;
-            wake();
-          }, intervalMs);
+          loadImage(src1)
+            .then((imgB) => {
+              if (disposed) return;
+              gl.activeTexture(gl.TEXTURE2);
+              gl.bindTexture(gl.TEXTURE_2D, texB);
+              gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, imgB);
+              gl.uniform1f(
+                uAspectBLoc,
+                (imgB.naturalWidth || 1) / Math.max(imgB.naturalHeight || 1, 1)
+              );
+
+              intervalId = window.setInterval(() => {
+                if (document.hidden) return;
+                transFrom = progress;
+                targetProgress = targetProgress < 0.5 ? 1.0 : 0.0;
+                transStart = performance.now();
+                isTransitioning = true;
+                wake();
+              }, intervalMs);
+            })
+            .catch(() => {});
         }
       })
       .catch(() => {
         // Silent fallback to native <img>
+        window.__ffHeroReady = true;
+        window.dispatchEvent(new CustomEvent("ff:hero-ready"));
       });
 
     return () => {
       disposed = true;
       if (rafId !== null) window.cancelAnimationFrame(rafId);
       if (intervalId !== null) window.clearInterval(intervalId);
-      window.removeEventListener("pointermove", handleWinMove);
+      if (canHover) {
+        window.removeEventListener("pointermove", handleWinMove);
+      }
       ro.disconnect();
       gl.deleteTexture(waveTex);
       gl.deleteTexture(texA);
@@ -505,16 +539,19 @@ export default function HeroFluidSlideshow({
 
   return (
     <div ref={containerRef} data-hero-img="true" className={`relative overflow-hidden ${className}`}>
-      {/* Native <img> fallback (SSR, mobile, reduced-motion) */}
-      <img
-        src={images[fallbackIdx] || src0}
-        alt={alt}
-        loading="eager"
-        decoding="async"
-        className={`w-full h-full object-cover transition-opacity duration-700 ${
-          webglReady ? "opacity-0" : "opacity-100"
-        } ${imgClassName}`}
-      />
+      {/* Native <img> fallback (SSR, reduced-motion, or non-WebGL) with smooth crossfade */}
+      {images.map((imgSrc, idx) => (
+        <img
+          key={imgSrc}
+          src={imgSrc}
+          alt={alt}
+          loading={idx === 0 ? "eager" : "lazy"}
+          decoding="async"
+          className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ${
+            webglReady ? "opacity-0" : fallbackIdx === idx ? "opacity-100" : "opacity-0"
+          } ${imgClassName}`}
+        />
+      ))}
 
       {/* WebGL Big-Square-Pixel Slideshow + Liquid Hover Refraction Canvas */}
       <canvas

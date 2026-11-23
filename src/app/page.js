@@ -62,7 +62,7 @@ export default function HomePage() {
           >
             <Parallax speed={0.14} scale={1} className="w-full h-full">
               <HeroFluidSlideshow
-                images={["/hero-editorial.png", "/hero2_transparent.png"]}
+                images={["/hero-editorial.webp", "/hero2_transparent.webp"]}
                 alt="Fuego Forge Editorial Campaign Portrait"
                 intervalMs={9500}
                 transitionMs={2350}
