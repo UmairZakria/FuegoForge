@@ -209,20 +209,15 @@ export default function PageLoader() {
         "+=0.06"
       );
 
-      // 3. Fire Hero GSAP entrance right as the screen lifts
-      tl.add(() => {
-        window.__ffPreloaderDone = true;
-        window.dispatchEvent(new CustomEvent("ff:preloader-done"));
-      }, "-=0.1");
-
-      // 4. Lusion-style curved center-arch curtain sweep on the solid photo background
+      // 3. Lusion-style curved center-arch curtain sweep on the solid photo background
+      // Fire ff:preloader-done right as the curtain actually opens so page reveals are clearly visible!
       if (curvePathRef.current && bgRef.current) {
         tl.add(() => {
           if (bgRef.current) {
             bgRef.current.style.clipPath = "url(#ff-loader-curtain-clip)";
             bgRef.current.style.webkitClipPath = "url(#ff-loader-curtain-clip)";
           }
-        }, "-=0.08")
+        }, "-=0.06")
           .to(
             curvePathRef.current,
             {
@@ -232,6 +227,10 @@ export default function PageLoader() {
             },
             "<"
           )
+          .add(() => {
+            window.__ffPreloaderDone = true;
+            window.dispatchEvent(new CustomEvent("ff:preloader-done"));
+          }, "-=0.08")
           .to(
             curvePathRef.current,
             {
@@ -242,14 +241,17 @@ export default function PageLoader() {
             "-=0.04"
           );
       } else {
-        tl.to(
+        tl.add(() => {
+          window.__ffPreloaderDone = true;
+          window.dispatchEvent(new CustomEvent("ff:preloader-done"));
+        }, "-=0.04").to(
           rootRef.current,
           {
             yPercent: -100,
             duration: 0.85,
             ease: "power4.inOut",
           },
-          "-=0.06"
+          "<"
         );
       }
     };

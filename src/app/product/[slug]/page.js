@@ -4,6 +4,7 @@ import { getAllProducts, getProductBySlug } from "@/lib/products";
 import ProductGallery from "@/components/ProductGallery";
 import ProductCard from "@/components/ProductCard";
 import WishlistButton from "@/components/WishlistButton";
+import ProductPageReveal from "@/components/ProductPageReveal";
 import { Star, ArrowRight } from "lucide-react";
 
 // SSG: Pre-render all product pages statically at build time
@@ -178,74 +179,84 @@ export default async function ProductDetailPage({ params }) {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
       />
 
-      <div className="layout-shell pt-[clamp(84px,8vw,116px)] pb-[clamp(36px,4vw,64px)] space-y-[var(--section-gap)]">
-        {/* Breadcrumb Bar */}
-        <nav className="flex items-center gap-2 text-[length:var(--text-xs)] font-sans uppercase tracking-luxury text-[var(--text-muted)]">
-          <Link href="/" className="hover:text-[var(--text-primary)] transition-colors">
-            Home
-          </Link>
-          <span>/</span>
-          <Link
-            href={`/category/${product.category}`}
-            className="hover:text-[var(--text-primary)] transition-colors"
+      <ProductPageReveal slug={product.slug}>
+        <div className="layout-shell pt-[clamp(84px,8vw,116px)] pb-[clamp(36px,4vw,64px)] space-y-[var(--section-gap)]">
+          {/* Breadcrumb Bar */}
+          <nav
+            data-product-breadcrumb="true"
+            className="flex items-center gap-2 text-[length:var(--text-xs)] font-sans uppercase tracking-luxury text-[var(--text-muted)]"
           >
-            {product.categoryName}
-          </Link>
-          <span>/</span>
-          <span className="text-[var(--text-primary)] truncate max-w-md">{product.title}</span>
-        </nav>
+            <Link href="/" className="hover:text-[var(--text-primary)] transition-colors">
+              Home
+            </Link>
+            <span>/</span>
+            <Link
+              href={`/category/${product.category}`}
+              className="hover:text-[var(--text-primary)] transition-colors"
+            >
+              {product.categoryName}
+            </Link>
+            <span>/</span>
+            <span className="text-[var(--text-primary)] truncate max-w-md">{product.title}</span>
+          </nav>
 
-        {/* Product Showcase: Gallery (Left) & Sticky Purchase Details (Right) */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-[var(--block-gap)] items-start">
-          {/* Left Column: Gallery (Images + Product Video) */}
-          <div className="lg:col-span-7 xl:col-span-7">
-            <ProductGallery
-              images={product.images}
-              videoUrl={product.videoUrl}
-              title={product.title}
-            />
-          </div>
-
-          {/* Right Column: Clean, Bold Editorial Purchase Panel */}
-          <div className="lg:col-span-5 xl:col-span-5 space-y-7 lg:sticky lg:top-[calc(var(--header-height)+24px)] bg-[var(--bg-card)]/90 border border-[var(--border-light)] rounded-[12px] p-[var(--panel-padding)]">
-            {/* Category + Save Favorite Button + Title */}
-            <div className="space-y-2.5">
-              <div className="flex items-center justify-between gap-3">
-                <span className="text-xs font-poppins text-[var(--burgundy)] font-medium block">
-                  {product.categoryName}
-                </span>
-                <WishlistButton product={product} />
-              </div>
-
-              <h1 className="font-cormorant  text-[clamp(1.75rem,2.3vw,2.6rem)] leading-[1.08] font-medium  italic text-[#171515] ">
-                {product.title}
-              </h1>
+          {/* Product Showcase: Gallery (Left) & Sticky Purchase Details (Right) */}
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-[var(--block-gap)] items-start">
+            {/* Left Column: Gallery (Images + Product Video) */}
+            <div data-product-gallery="true" className="lg:col-span-7 xl:col-span-7">
+              <ProductGallery
+                images={product.images}
+                videoUrl={product.videoUrl}
+                title={product.title}
+              />
             </div>
 
-            {/* Unboxed Bold Price & Rating Row */}
-            <div className="flex items-baseline justify-between gap-4 pb-6 border-b border-[var(--border-light)]">
-              <div className="flex items-baseline gap-3">
-                <span className="font-poppins text-3xl sm:text-4xl font-semibold text-[#171515] tracking-tight">
-                  ${Number(product.price).toFixed(2)}
-                </span>
-                {product.originalPrice > product.price && (
-                  <span className="font-poppins text-base sm:text-lg text-[var(--text-muted)] line-through font-light">
-                    ${Number(product.originalPrice).toFixed(2)}
+            {/* Right Column: Clean, Bold Editorial Purchase Panel */}
+            <div
+              data-product-panel="true"
+              className="lg:col-span-5 xl:col-span-5 space-y-7 lg:sticky lg:top-[calc(var(--header-height)+24px)] bg-[var(--bg-card)]/90 border border-[var(--border-light)] rounded-[12px] p-[var(--panel-padding)]"
+            >
+              {/* Category + Save Favorite Button + Title */}
+              <div data-product-stagger="true" className="space-y-2.5">
+                <div className="flex items-center justify-between gap-3">
+                  <span className="text-xs font-poppins text-[var(--burgundy)] font-medium block">
+                    {product.categoryName}
                   </span>
-                )}
+                  <WishlistButton product={product} />
+                </div>
+
+                <h1 className="font-cormorant  text-[clamp(1.75rem,2.3vw,2.6rem)] leading-[1.08] font-medium  italic text-[#171515] ">
+                  {product.title}
+                </h1>
               </div>
 
-              <div className="flex items-center gap-1.5 text-xs font-poppins text-[var(--text-secondary)]">
-                <Star className="w-3.5 h-3.5 fill-[#171515] text-[#171515]" />
-                <span className="font-semibold text-[#171515]">
-                  {Number(product.rating || 4.9).toFixed(1)}
-                </span>
-                <span className="text-[var(--text-muted)]">({product.reviewsCount})</span>
-              </div>
-            </div>
+              {/* Unboxed Bold Price & Rating Row */}
+              <div
+                data-product-stagger="true"
+                className="flex items-baseline justify-between gap-4 pb-6 border-b border-[var(--border-light)]"
+              >
+                <div className="flex items-baseline gap-3">
+                  <span className="font-poppins text-3xl sm:text-4xl font-semibold text-[#171515] tracking-tight">
+                    ${Number(product.price).toFixed(2)}
+                  </span>
+                  {product.originalPrice > product.price && (
+                    <span className="font-poppins text-base sm:text-lg text-[var(--text-muted)] line-through font-light">
+                      ${Number(product.originalPrice).toFixed(2)}
+                    </span>
+                  )}
+                </div>
 
-            {/* Bold Architectural CTA Stack */}
-            <div className="space-y-3">
+                <div className="flex items-center gap-1.5 text-xs font-poppins text-[var(--text-secondary)]">
+                  <Star className="w-3.5 h-3.5 fill-[#171515] text-[#171515]" />
+                  <span className="font-semibold text-[#171515]">
+                    {Number(product.rating || 4.9).toFixed(1)}
+                  </span>
+                  <span className="text-[var(--text-muted)]">({product.reviewsCount})</span>
+                </div>
+              </div>
+
+              {/* Bold Architectural CTA Stack */}
+              <div data-product-stagger="true" className="space-y-3">
               {/* Primary Buy Now Button */}
               <a
                 href={product.etsyUrl}
@@ -282,7 +293,7 @@ export default async function ProductDetailPage({ params }) {
             </div>
 
             {/* Clean Editorial Description & Specifications */}
-            <div className="border-t border-[var(--border-light)] pt-6 space-y-6">
+            <div data-product-stagger="true" className="border-t border-[var(--border-light)] pt-6 space-y-6">
               <div className="space-y-2">
                 <h2 className="text-xs font-poppins font-medium text-[#171515]">
                   Description
@@ -354,7 +365,8 @@ export default async function ProductDetailPage({ params }) {
             </div>
           </section>
         )}
-      </div>
+        </div>
+      </ProductPageReveal>
     </>
   );
 }

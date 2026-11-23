@@ -214,6 +214,7 @@ export default function FluidHoverImage({
       antialias: true,
       depth: false,
       stencil: false,
+      preserveDrawingBuffer: true,
       powerPreference: "high-performance",
     });
     if (!gl) return;
@@ -460,6 +461,22 @@ export default function FluidHoverImage({
           (img.naturalWidth || 1) / Math.max(img.naturalHeight || 1, 1)
         );
         imgLoaded = true;
+
+        // Paint the very first neutral WebGL frame synchronously BEFORE showing the canvas
+        for (let i = 0; i < curr.length; i++) {
+          const v = Math.max(0, Math.min(255, Math.round((curr[i] * 0.5 + 0.5) * 255)));
+          const p = i * 4;
+          pixels[p] = v;
+          pixels[p + 1] = v;
+          pixels[p + 2] = v;
+          pixels[p + 3] = 255;
+        }
+        gl.activeTexture(gl.TEXTURE0);
+        gl.bindTexture(gl.TEXTURE_2D, waveTex);
+        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, SIM_W, SIM_H, 0, gl.RGBA, gl.UNSIGNED_BYTE, pixels);
+        gl.clear(gl.COLOR_BUFFER_BIT);
+        gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+
         setCanvasVisible(true);
         wake();
       })
@@ -518,9 +535,7 @@ export default function FluidHoverImage({
         alt={alt}
         loading={loading}
         decoding="async"
-        className={`w-full h-full object-cover object-center transition-opacity duration-200 ${
-          canvasVisible ? "opacity-0" : "opacity-100"
-        } ${imgClassName}`}
+        className={`w-full h-full object-cover object-center ${imgClassName}`}
         {...imgProps}
       />
       {active && (

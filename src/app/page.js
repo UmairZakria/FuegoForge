@@ -45,7 +45,7 @@ export default function HomePage() {
     { label: "necklaces", href: "/category/necklaces" },
     { label: "bracelets", href: "/category/bracelets" },
     { label: "hairpins", href: "/category/hair-accessories" },
-    { label: "ring boxes", href: "/category/jewelry-boxes" },
+    // { label: "ring boxes", href: "/category/jewelry-boxes" },
   ];
 
   return (

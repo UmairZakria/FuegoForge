@@ -12,7 +12,7 @@ export default function SplitPortraitGrid() {
   }));
 
   return (
-    <section className="layout-shell  pb-[var(--section-gap)]">
+    <section className="hidden md:block layout-shell pb-[var(--section-gap)]">
       <div className="relative w-full aspect-square overflow-hidden ">
         {/* Single Optimized Image Layer with Lusion Liquid Hover */}
         <FluidHoverImage
