@@ -91,7 +91,8 @@ export const metadata = {
   twitter: {
     card: "summary_large_image",
     title: "FUEGO FORGE | Handcrafted Luxury Fine Jewelry",
-    description: "Exclusive artisan jewelry pieces designed for timeless elegance.",
+    description:
+      "Exclusive artisan jewelry pieces designed for timeless elegance.",
     creator: "@fuegoforge",
   },
   verification: {
@@ -124,7 +125,10 @@ export default function RootLayout({ children }) {
       logo: "https://i.etsystatic.com/58316748/c/932/932/330/130/il/66d1a3/8789393707/il_800x800.8789393707_i4u1.jpg",
       description: "Artisan handcrafted luxury jewelry and circular heirlooms.",
       priceRange: "$$",
-      sameAs: ["https://fuegoforge.etsy.com", "https://pinterest.com/fuegoforge"],
+      sameAs: [
+        "https://fuegoforge.etsy.com",
+        "https://pinterest.com/fuegoforge",
+      ],
     },
     {
       "@context": "https://schema.org",
@@ -147,7 +151,9 @@ export default function RootLayout({ children }) {
       <head>
         <script
           type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationSchema) }}
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(organizationSchema),
+          }}
         />
       </head>
       <body className="min-h-screen flex flex-col bg-[var(--bg-primary)] text-[var(--text-primary)]">
