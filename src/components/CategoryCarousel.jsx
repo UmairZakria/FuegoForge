@@ -63,7 +63,7 @@ export default function CategoryCarousel({ categories = [] }) {
           <Link
             key={cat.slug}
             href={`/category/${cat.slug}`}
-            className="group relative shrink-0 w-[80%] sm:w-[48%] lg:w-[32%] xl:w-[27.5%] aspect-[4/5] rounded-[14px] overflow-hidden snap-start bg-[#0E0D0D]"
+            className="group relative shrink-0 w-[50%]  md:w-[17.5%] aspect-[4/5]  overflow-hidden snap-start bg-[var(--burgundy)]"
           >
             {/* Full-Bleed Collection Photo with Lusion Liquid Hover */}
             {cat.sampleImage ? (
@@ -76,21 +76,18 @@ export default function CategoryCarousel({ categories = [] }) {
                 />
               </Parallax>
             ) : (
-              <div className="absolute inset-0 bg-[#141313]" />
+              <div className="absolute inset-0 bg-" />
             )}
 
             {/* Pure Cinematic Black Bottom Fade */}
-            <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 via-45% to-transparent transition-opacity duration-500 group-hover:opacity-95 pointer-events-none" />
+            <div className="absolute inset-0 border bg-linear-to-tl from-black/90  to-black/10 transition-opacity duration-500 group-hover:opacity-95 pointer-events-none" />
 
             {/* Minimalist Bottom Typography */}
             <div className="relative z-10 h-full p-6 sm:p-7 flex flex-col justify-end pointer-events-none">
               <div className="flex items-end justify-between gap-4">
                 <div className="space-y-1">
-                  <span className="block text-[10px] font-poppins font-medium uppercase tracking-[0.24em] text-white/60">
-                    {String(idx + 1).padStart(2, "0")} — {cat.count}{" "}
-                    {cat.count === 1 ? "Piece" : "Pieces"}
-                  </span>
-                  <h3 className="font-editorial text-[clamp(1.85rem,2.5vw,2.6rem)] font-medium uppercase leading-[0.95] tracking-[-0.01em] text-white">
+                  
+                  <h3 className="font-raleway text-[clamp(1.2rem,1.5vw,2.6rem)] font-light  leading-[0.95]  text-white">
                     {cat.name}
                   </h3>
                 </div>

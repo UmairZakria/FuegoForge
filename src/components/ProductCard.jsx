@@ -31,6 +31,8 @@ export default function ProductCard({ product }) {
   const wishlisted = isWishlisted(product.id);
   const [isHovered, setIsHovered] = useState(false);
   const [playVideo, setPlayVideo] = useState(false);
+  const [videoReady, setVideoReady] = useState(false);
+  const [secondaryReady, setSecondaryReady] = useState(false);
   const hoverTimerRef = useRef(null);
 
   useEffect(() => {
@@ -44,13 +46,14 @@ export default function ProductCard({ product }) {
     if (hasVideo) {
       hoverTimerRef.current = window.setTimeout(() => {
         setPlayVideo(true);
-      }, 320);
+      }, 280);
     }
   };
 
   const handleMouseLeave = () => {
     setIsHovered(false);
     setPlayVideo(false);
+    setVideoReady(false);
     if (hoverTimerRef.current) {
       window.clearTimeout(hoverTimerRef.current);
       hoverTimerRef.current = null;
@@ -68,27 +71,27 @@ export default function ProductCard({ product }) {
         <Link href={`/product/${slug}`} className="block w-full h-full">
           {thumbMain ? (
             <>
+              {/* Base Main Photo stays always visible underneath so there is ZERO blank flash */}
               <img
                 src={thumbMain}
                 alt={title}
                 loading="lazy"
                 decoding="async"
-                className={`w-full h-full object-cover transition-transform duration-500 ease-out group-hover:scale-105 ${
-                  playVideo || (isHovered && !hasVideo && thumbSecondary)
-                    ? "opacity-0"
-                    : "opacity-100"
-                }`}
+                className="w-full h-full object-cover transition-transform duration-500 ease-out group-hover:scale-105"
               />
               {playVideo && hasVideo && (
                 <video
                   src={videoUrl}
-                  poster={thumbSecondary || thumbMain}
                   autoPlay
                   muted
                   loop
                   playsInline
-                  preload="metadata"
-                  className="absolute inset-0 w-full h-full object-cover"
+                  preload="auto"
+                  onLoadedData={() => setVideoReady(true)}
+                  onPlaying={() => setVideoReady(true)}
+                  className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-300 ${
+                    videoReady ? "opacity-100" : "opacity-0"
+                  }`}
                 />
               )}
               {isHovered && !hasVideo && thumbSecondary && (
@@ -96,7 +99,10 @@ export default function ProductCard({ product }) {
                   src={thumbSecondary}
                   alt={`${title} alternate view`}
                   decoding="async"
-                  className="absolute inset-0 w-full h-full object-cover scale-105"
+                  onLoad={() => setSecondaryReady(true)}
+                  className={`absolute inset-0 w-full h-full object-cover scale-105 transition-opacity duration-300 ${
+                    secondaryReady ? "opacity-100" : "opacity-0"
+                  }`}
                 />
               )}
             </>

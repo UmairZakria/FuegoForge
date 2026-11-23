@@ -4,6 +4,14 @@ import { useEffect, useRef, useState } from "react";
 import gsap from "gsap";
 
 const PRIMARY_HERO_SRC = "/hero-editorial.webp";
+const LOADER_BACKGROUNDS = [
+  "/loader-bg.webp",
+  "/loader-bg-2.webp",
+  "/loader-bg-3.webp",
+  "/loader-bg-4.webp",
+];
+const RING_RADIUS = 94;
+const RING_CIRCUMFERENCE = 2 * Math.PI * RING_RADIUS;
 
 const SCROLL_KEYS = new Set([
   " ",
@@ -15,11 +23,6 @@ const SCROLL_KEYS = new Set([
   "End",
 ]);
 
-/**
- * Streams a critical image via Fetch + ReadableStream so progress updates
- * smoothly byte-by-byte even on throttled 3G networks (never stuck at 00%).
- * Decodes the image on GPU before resolving.
- */
 async function streamAndDecodeImage(src, onFraction) {
   try {
     const res = await fetch(src, { cache: "force-cache" });
@@ -43,7 +46,6 @@ async function streamAndDecodeImage(src, onFraction) {
     onFraction(1);
   }
 
-  // Ensure the browser has decoded the cached image ready for instant paint
   await new Promise((resolve) => {
     const img = new Image();
     img.decoding = "async";
@@ -81,29 +83,32 @@ function waitForHeroReady(timeoutMs = 12000) {
 
 export default function PageLoader() {
   const [count, setCount] = useState(0);
-  const [stageLabel, setStageLabel] = useState("Preparing Atelier");
   const [mounted, setMounted] = useState(true);
 
   const rootRef = useRef(null);
-  const contentRef = useRef(null);
+  const bgRef = useRef(null);
+  const bgImgRef = useRef(null);
   const curvePathRef = useRef(null);
-  const barRef = useRef(null);
+  const ringWrapRef = useRef(null);
+  const ringArcRef = useRef(null);
 
   useEffect(() => {
-    // Only run once per session so back/forth navigation stays instant
-    try {
-      if (sessionStorage.getItem("ff_lusion_loaded") === "1") {
-        setMounted(false);
-        window.__ffPreloaderDone = true;
-        window.__ffLenis?.start();
-        window.dispatchEvent(new CustomEvent("ff:preloader-done"));
-        return;
+    // Pick a random loading background (avoiding immediate repeat across reloads)
+    if (bgImgRef.current) {
+      let idx = Math.floor(Math.random() * LOADER_BACKGROUNDS.length);
+      try {
+        const last = Number(sessionStorage.getItem("ff_last_loader_bg"));
+        if (!Number.isNaN(last) && LOADER_BACKGROUNDS.length > 1 && idx === last) {
+          idx = (idx + 1 + Math.floor(Math.random() * (LOADER_BACKGROUNDS.length - 1))) % LOADER_BACKGROUNDS.length;
+        }
+        sessionStorage.setItem("ff_last_loader_bg", String(idx));
+      } catch {
+        // ignore storage errors
       }
-    } catch {
-      // ignore storage errors
+      bgImgRef.current.src = LOADER_BACKGROUNDS[idx];
     }
 
-    // 1. Complete scroll lock (HTML + Body + Lenis + Wheel/Touch/Keyboard)
+    // Complete scroll lock (HTML + Body + Lenis + Wheel/Touch/Keyboard)
     window.scrollTo(0, 0);
     window.__ffLenis?.stop();
 
@@ -136,31 +141,33 @@ export default function PageLoader() {
     let cancelled = false;
     let revealed = false;
 
-    // Real weighted progress buckets (sum = 100)
     const buckets = {
-      fonts: 0, // max 20
-      heroImage: 0, // max 55 (streamed byte-by-byte!)
-      heroRender: 0, // max 25 (DOM/WebGL painted)
+      fonts: 0, // 20
+      heroImage: 0, // 55 (streamed byte-by-byte)
+      heroRender: 0, // 25
     };
 
     const displayObj = { value: 0 };
     let progressTween = null;
 
+    const applyVisualProgress = (val) => {
+      setCount(Math.round(val));
+      if (ringArcRef.current) {
+        const offset = RING_CIRCUMFERENCE * (1 - val / 100);
+        ringArcRef.current.style.strokeDashoffset = String(offset);
+      }
+    };
+
     const syncProgress = () => {
       if (cancelled || revealed) return;
-      const total = Math.min(99, buckets.fonts + buckets.heroImage + buckets.heroRender);
+      const total = Math.min(96, buckets.fonts + buckets.heroImage + buckets.heroRender);
       if (progressTween) progressTween.kill();
       progressTween = gsap.to(displayObj, {
         value: Math.max(displayObj.value, total),
-        duration: 0.3,
+        duration: 0.9,
         ease: "power2.out",
         onUpdate: () => {
-          if (cancelled) return;
-          const v = Math.round(displayObj.value);
-          setCount(v);
-          if (barRef.current) {
-            barRef.current.style.transform = `scaleX(${displayObj.value / 100})`;
-          }
+          if (!cancelled) applyVisualProgress(displayObj.value);
         },
       });
     };
@@ -170,14 +177,7 @@ export default function PageLoader() {
       revealed = true;
       if (progressTween) progressTween.kill();
 
-      try {
-        sessionStorage.setItem("ff_lusion_loaded", "1");
-      } catch {
-        // ignore
-      }
-
       window.scrollTo(0, 0);
-      setStageLabel("Entering Atelier");
 
       const tl = gsap.timeline({
         onComplete: () => {
@@ -187,89 +187,87 @@ export default function PageLoader() {
         },
       });
 
-      // 1. Finish counter smoothly to 100%
+      // 1. Finish circular arc & counter smoothly to 100
       tl.to(displayObj, {
         value: 100,
-        duration: 0.35,
+        duration: 0.45,
         ease: "power3.out",
         onUpdate: () => {
-          if (cancelled) return;
-          const v = Math.round(displayObj.value);
-          setCount(v);
-          if (barRef.current) {
-            barRef.current.style.transform = `scaleX(${displayObj.value / 100})`;
-          }
+          if (!cancelled) applyVisualProgress(displayObj.value);
         },
       });
 
-      // 2. Lift preloader typography & emblem out
+      // 2. Fade & subtly scale out the minimalist ring
       tl.to(
-        contentRef.current,
+        ringWrapRef.current,
         {
-          y: -44,
+          scale: 0.94,
           opacity: 0,
-          duration: 0.4,
+          duration: 0.38,
           ease: "power3.in",
         },
-        "+=0.05"
+        "+=0.06"
       );
 
-      // 3. Fire Hero GSAP entrance right as the curved curtain sweeps upward
+      // 3. Fire Hero GSAP entrance right as the screen lifts
       tl.add(() => {
         window.__ffPreloaderDone = true;
         window.dispatchEvent(new CustomEvent("ff:preloader-done"));
       }, "-=0.1");
 
-      // 4. Lusion-style curved SVG veil morph & upward sweep
-      if (curvePathRef.current) {
-        tl.to(
-          curvePathRef.current,
-          {
-            attr: { d: "M0 0 L100 0 L100 100 Q50 72 0 100 Z" },
-            duration: 0.42,
-            ease: "power2.in",
-          },
-          "-=0.08"
-        ).to(
-          curvePathRef.current,
-          {
-            attr: { d: "M0 0 L100 0 L100 0 Q50 0 0 0 Z" },
-            duration: 0.62,
-            ease: "power4.out",
-          },
-          "-=0.04"
-        );
+      // 4. Lusion-style curved center-arch curtain sweep on the solid photo background
+      if (curvePathRef.current && bgRef.current) {
+        tl.add(() => {
+          if (bgRef.current) {
+            bgRef.current.style.clipPath = "url(#ff-loader-curtain-clip)";
+            bgRef.current.style.webkitClipPath = "url(#ff-loader-curtain-clip)";
+          }
+        }, "-=0.08")
+          .to(
+            curvePathRef.current,
+            {
+              attr: { d: "M0 0 L1 0 L1 1 Q0.5 0.68 0 1 Z" },
+              duration: 0.44,
+              ease: "power2.in",
+            },
+            "<"
+          )
+          .to(
+            curvePathRef.current,
+            {
+              attr: { d: "M0 0 L1 0 L1 0 Q0.5 0 0 0 Z" },
+              duration: 0.65,
+              ease: "power4.out",
+            },
+            "-=0.04"
+          );
       } else {
-        tl.to(rootRef.current, {
-          yPercent: -100,
-          duration: 0.8,
-          ease: "power4.inOut",
-        });
+        tl.to(
+          rootRef.current,
+          {
+            yPercent: -100,
+            duration: 0.85,
+            ease: "power4.inOut",
+          },
+          "-=0.06"
+        );
       }
     };
 
     const isHome = Boolean(document.querySelector("[data-hero-portrait]"));
 
-    // Task 1: Typography ready (20%)
     const fontsTask = (
       typeof document !== "undefined" && document.fonts
         ? document.fonts.ready.catch(() => {})
         : Promise.resolve()
     ).then(() => {
       buckets.fonts = 20;
-      if (!cancelled && isHome && buckets.heroImage < 55) {
-        setStageLabel("Loading Editorial Portrait");
-      }
       syncProgress();
     });
 
-    // Task 2: Stream primary Hero WebP byte-by-byte + GPU decode (55%)
     const heroImageTask = isHome
       ? streamAndDecodeImage(PRIMARY_HERO_SRC, (fraction) => {
           buckets.heroImage = Math.round(fraction * 55);
-          if (!cancelled && fraction > 0.05 && fraction < 1) {
-            setStageLabel("Loading Editorial Portrait");
-          }
           syncProgress();
         })
       : Promise.resolve().then(() => {
@@ -277,15 +275,14 @@ export default function PageLoader() {
           syncProgress();
         });
 
-    // Task 3: Hero DOM/WebGL first frame painted (25%)
     const heroRenderTask = waitForHeroReady(12000).then(() => {
       buckets.heroRender = 25;
-      if (!cancelled) setStageLabel("Entering Atelier");
       syncProgress();
     });
 
-    // Wait for ALL 3 real tasks (+ brief 500ms floor so fast cache still feels intentional)
-    const minGrace = new Promise((r) => window.setTimeout(r, 500));
+    // Smooth intentional minimum showcase duration (1.25s) even on cached loads,
+    // while still waiting for real assets on slower connections (up to 14s failsafe)
+    const minGrace = new Promise((r) => window.setTimeout(r, 2250));
     const hardFailsafe = window.setTimeout(triggerReveal, 14000);
 
     Promise.all([fontsTask, heroImageTask, heroRenderTask, minGrace]).then(triggerReveal);
@@ -305,71 +302,65 @@ export default function PageLoader() {
       ref={rootRef}
       role="status"
       aria-live="polite"
-      aria-label="Loading Fuego Forge Atelier"
-      className="fixed inset-0 z-[100] pointer-events-auto select-none overflow-hidden touch-none overscroll-none"
+      aria-label="Loading Fuego Forge"
+      className="fixed inset-0 z-[100] pointer-events-auto select-none overflow-hidden touch-none overscroll-none flex items-center justify-center"
     >
-      {/* Curved Lusion-Style SVG Curtain */}
-      <svg
-        viewBox="0 0 100 100"
-        preserveAspectRatio="none"
-        className="absolute inset-0 w-full h-full"
-      >
-        <path
-          ref={curvePathRef}
-          d="M0 0 L100 0 L100 100 Q50 100 0 100 Z"
-          fill="#110F0E"
-        />
+      {/* Hidden SVG ClipPath for the Lusion center-curved curtain reveal */}
+      <svg className="absolute w-px h-px opacity-0 pointer-events-none" aria-hidden="true">
+        <defs>
+          <clipPath id="ff-loader-curtain-clip" clipPathUnits="objectBoundingBox">
+            <path ref={curvePathRef} d="M0 0 L1 0 L1 1 Q0.5 1 0 1 Z" />
+          </clipPath>
+        </defs>
       </svg>
 
-      {/* Architectural Preloader Content */}
+      {/* 100% Solid Opaque Background Photo + Subtle Dark Scrim */}
+      <div ref={bgRef} className="absolute inset-0 bg-[#0E0C0B]">
+        <img
+          ref={bgImgRef}
+          alt=""
+          loading="eager"
+          decoding="async"
+          className="w-full h-full object-cover object-center"
+        />
+        <div className="absolute inset-0 bg-black/45" />
+      </div>
+
+      {/* Minimalist Aesthetic Circular Progress Ring + Centered Number */}
       <div
-        ref={contentRef}
-        className="relative z-10 w-full h-full flex flex-col justify-between p-6 sm:p-10 lg:p-14 text-[#FAF7F2]"
+        ref={ringWrapRef}
+        className="relative z-10 w-[clamp(210px,24vw,300px)] h-[clamp(210px,24vw,300px)] flex items-center justify-center"
       >
-        {/* Top Micro Row */}
-        <div className="flex items-center justify-between text-[11px] font-poppins uppercase tracking-[0.22em] text-white/55">
-          <span className="font-cinzel-decorative text-white/90 tracking-[0.2em]">
-            Fuego Forge
-          </span>
-          <span>Joaillerie &amp; Artisanat</span>
-        </div>
+        <svg
+          viewBox="0 0 200 200"
+          className="absolute inset-0 w-full h-full -rotate-90"
+          aria-hidden="true"
+        >
+          <circle
+            cx="100"
+            cy="100"
+            r={RING_RADIUS}
+            fill="none"
+            stroke="rgba(243, 236, 200, 0.14)"
+            strokeWidth="1.2"
+          />
+          <circle
+            ref={ringArcRef}
+            cx="100"
+            cy="100"
+            r={RING_RADIUS}
+            fill="none"
+            stroke="#F3ECC8"
+            strokeWidth="1.2"
+            strokeLinecap="round"
+            strokeDasharray={RING_CIRCUMFERENCE}
+            strokeDashoffset={RING_CIRCUMFERENCE}
+          />
+        </svg>
 
-        {/* Center Sculptural Rotating Atelier Emblem + Live Stage Label */}
-        <div className="flex flex-col items-center justify-center gap-6 my-auto">
-          <div className="relative w-20 h-20 sm:w-24 sm:h-24 flex items-center justify-center">
-            <span className="absolute -inset-6 rounded-full bg-[#9E2A30]/15 blur-2xl animate-pulse" />
-            <span className="absolute inset-0 rounded-full border border-white/15 animate-[spin_9s_linear_infinite]" />
-            <span className="absolute inset-2.5 rotate-45 border border-[#D9464F]/75 animate-[spin_6s_linear_infinite_reverse]" />
-            <span className="w-2 h-2 rounded-full bg-[#D9464F] shadow-[0_0_12px_rgba(217,70,79,0.85)]" />
-          </div>
-          <span className="text-[11px] font-poppins uppercase tracking-[0.26em] text-white/60 transition-opacity duration-300">
-            {stageLabel}
-          </span>
-        </div>
-
-        {/* Bottom Giant Lusion-Style Counter & Hairline Progress Bar */}
-        <div className="space-y-4">
-          <div className="flex items-end justify-between gap-4">
-            <span className="font-editorial text-[clamp(4.2rem,11vw,10.5rem)] leading-[0.82] font-light tracking-[-0.04em] tabular-nums text-white">
-              {String(count).padStart(2, "0")}
-              <span className="text-[0.35em] text-[#D9464F] align-top ml-1">%</span>
-            </span>
-
-            <p className="hidden sm:block text-right text-xs font-poppins font-light text-white/50 max-w-[26ch] leading-relaxed pb-2">
-              Handcrafted fine jewelry.
-              <br />
-              Forged to live in.
-            </p>
-          </div>
-
-          <div className="w-full h-[1px] bg-white/15 overflow-hidden">
-            <div
-              ref={barRef}
-              className="w-full h-full bg-[#D9464F] origin-left"
-              style={{ transform: "scaleX(0)" }}
-            />
-          </div>
-        </div>
+        <span className="font-editorial text-[clamp(3.2rem,5.5vw,4.8rem)] font-light leading-none tracking-[-0.02em] tabular-nums text-[#F3ECC8]">
+          {String(count).padStart(2, "0")}
+        </span>
       </div>
     </div>
   );

@@ -46,12 +46,12 @@ export default function EditorialJournal() {
         </p>
       </div>
 
-      {/* 3-Column Editorial Article Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-[var(--grid-gap)]">
+      {/* Mobile Horizontal Swipe Track / Desktop 3-Column Editorial Article Grid */}
+      <div className="-mx-[var(--page-gutter)] px-[var(--page-gutter)] md:mx-0 md:px-0 flex md:grid md:grid-cols-3 gap-[var(--grid-gap)] overflow-x-auto md:overflow-visible snap-x snap-mandatory scroll-smooth pb-2 md:pb-0 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
         {JOURNAL_STORIES.map((story) => (
           <article
             key={story.id}
-            className="group bg-[#FAF7F2] border border-[var(--border-light)] rounded-[14px] p-4 sm:p-5 flex flex-col justify-between gap-4 hover:border-[var(--border-strong)] transition-colors"
+            className="group shrink-0 w-[82%] sm:w-[62%] md:w-auto snap-start bg-[#FAF7F2] border border-[var(--border-light)] rounded-[14px] p-4 sm:p-5 flex flex-col justify-between gap-4 hover:border-[var(--border-strong)] transition-colors"
           >
             <h3 className="font-title font-medium text-[clamp(1rem,1.15vw,1.22rem)] text-[var(--text-primary)] leading-snug group-hover:text-[var(--burgundy)] transition-colors">
               {story.title}

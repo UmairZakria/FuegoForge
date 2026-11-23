@@ -1,10 +1,83 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useRef } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { Search, X, ChevronDown, ChevronRight } from "lucide-react";
+import { Search, X, ChevronDown, ChevronRight, ArrowLeft, ArrowRight } from "lucide-react";
 import ProductCard from "@/components/ProductCard";
+
+function CategoryShelf({ group }) {
+  const trackRef = useRef(null);
+
+  const scrollTrack = (direction) => {
+    const el = trackRef.current;
+    if (!el) return;
+    const step = Math.max(el.clientWidth * 0.78, 300);
+    el.scrollBy({ left: direction * step, behavior: "smooth" });
+  };
+
+  return (
+    <div className="space-y-3 md:space-y-5">
+      {/* Category Shelf Header */}
+      <div className="flex items-center justify-between gap-3 md:border-b md:border-[var(--border-light)] md:pb-3">
+        <div className="flex items-baseline gap-2.5 min-w-0">
+          <h3 className="font-editorial text-2xl md:text-[clamp(1.65rem,2.2vw,2.35rem)] font-normal uppercase tracking-[-0.01em] text-[#171515] truncate">
+            {group.name}
+          </h3>
+          <span className="text-[11px] md:text-xs font-poppins text-[var(--text-muted)] shrink-0">
+            ({group.items.length})
+          </span>
+        </div>
+
+        <div className="flex items-center gap-3 shrink-0">
+          {group.items.length > 4 && (
+            <div className="hidden md:flex items-center gap-1.5">
+              <button
+                type="button"
+                onClick={() => scrollTrack(-1)}
+                aria-label={`Previous ${group.name}`}
+                className="w-8 h-8 rounded-full border border-[var(--border-strong)] bg-[var(--bg-card)] hover:bg-[#171515] hover:text-white hover:border-[#171515] text-[#171515] flex items-center justify-center transition-all duration-200 active:scale-90 cursor-pointer"
+              >
+                <ArrowLeft className="w-3.5 h-3.5" />
+              </button>
+              <button
+                type="button"
+                onClick={() => scrollTrack(1)}
+                aria-label={`Next ${group.name}`}
+                className="w-8 h-8 rounded-full border border-[var(--border-strong)] bg-[var(--bg-card)] hover:bg-[#171515] hover:text-white hover:border-[#171515] text-[#171515] flex items-center justify-center transition-all duration-200 active:scale-90 cursor-pointer"
+              >
+                <ArrowRight className="w-3.5 h-3.5" />
+              </button>
+            </div>
+          )}
+
+          <Link
+            href={`/category/${group.slug}`}
+            className="inline-flex items-center gap-0.5 text-xs font-poppins font-medium text-[#9E2A30] hover:text-[#171515] transition-colors shrink-0"
+          >
+            <span>See all</span>
+            <ChevronRight className="w-3.5 h-3.5" />
+          </Link>
+        </div>
+      </div>
+
+      {/* Horizontal Swipeable Track (2 cards mobile / 3 tablet / exact 4-col card width desktop) */}
+      <div
+        ref={trackRef}
+        className="-mx-[var(--page-gutter)] px-[var(--page-gutter)] md:mx-0 md:px-0 flex gap-3 md:gap-[var(--grid-gap)] overflow-x-auto snap-x snap-mandatory scroll-smooth pb-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+      >
+        {group.items.map((product) => (
+          <div
+            key={product.id}
+            className="shrink-0 w-[46%] sm:w-[34%] md:w-[calc((100%-2*var(--grid-gap))/3)] lg:w-[calc((100%-3*var(--grid-gap))/4)] snap-start"
+          >
+            <ProductCard product={product} />
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
 
 export default function CatalogExplorer({ products, categories }) {
   const searchParams = useSearchParams();
@@ -50,18 +123,18 @@ function CatalogExplorerInner({ products, categories, initialQuery }) {
     return list;
   }, [products, selectedCategory, searchQuery, sortBy]);
 
-  const showMobileCategoryShelves =
+  const showCategorySections =
     selectedCategory === "all" && searchQuery.trim() === "";
 
   const groupedByCategory = useMemo(() => {
-    if (!showMobileCategoryShelves) return [];
+    if (!showCategorySections) return [];
     return categories
       .map((cat) => ({
         ...cat,
         items: filteredProducts.filter((p) => p.category === cat.slug),
       }))
       .filter((group) => group.items.length > 0);
-  }, [categories, filteredProducts, showMobileCategoryShelves]);
+  }, [categories, filteredProducts, showCategorySections]);
 
   const hasActiveFilters =
     selectedCategory !== "all" || searchQuery.trim() !== "" || sortBy !== "featured";
@@ -171,58 +244,14 @@ function CatalogExplorerInner({ products, categories, initialQuery }) {
         </div>
       </div>
 
-      {/* Products: Categorized Swipe Shelves on Mobile (All View) + 4-Column Grid on Desktop */}
+      {/* Products: Categorized Horizontal Swipe Shelves (All View) or Full Grid (Filtered/Search) */}
       {filteredProducts.length > 0 ? (
-        showMobileCategoryShelves ? (
-          <>
-            {/* Mobile Categorized Horizontal Swipe Shelves */}
-            <div className="md:hidden space-y-8">
-              {groupedByCategory.map((group) => (
-                <div key={group.slug} className="space-y-3">
-                  {/* Category Shelf Header */}
-                  <div className="flex items-center justify-between gap-3">
-                    <div className="flex items-baseline gap-2 min-w-0">
-                      <h3 className="font-editorial text-2xl font-normal uppercase tracking-[-0.01em] text-[#171515] truncate">
-                        {group.name}
-                      </h3>
-                      <span className="text-[11px] font-poppins text-[var(--text-muted)] shrink-0">
-                        ({group.items.length})
-                      </span>
-                    </div>
-
-                    <Link
-                      href={`/category/${group.slug}`}
-                      className="inline-flex items-center gap-0.5 text-xs font-poppins font-medium text-[#9E2A30] hover:text-[#171515] transition-colors shrink-0"
-                    >
-                      <span>See all</span>
-                      <ChevronRight className="w-3.5 h-3.5" />
-                    </Link>
-                  </div>
-
-                  {/* Edge-to-Edge Horizontal Swipe Track (2 cards + peek of 3rd) */}
-                  <div className="-mx-[var(--page-gutter)] px-[var(--page-gutter)] flex gap-3 overflow-x-auto snap-x snap-mandatory scroll-smooth pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-                    {group.items.map((product) => (
-                      <div
-                        key={product.id}
-                        className="shrink-0 w-[46%] sm:w-[34%] snap-start"
-                      >
-                        <ProductCard product={product} />
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              ))}
-            </div>
-
-            {/* Desktop Full-Width 4-Column Grid */}
-            <div className="hidden md:block">
-              <div className="fluid-product-grid">
-                {filteredProducts.map((product) => (
-                  <ProductCard key={product.id} product={product} />
-                ))}
-              </div>
-            </div>
-          </>
+        showCategorySections ? (
+          <div className="space-y-10 md:space-y-14">
+            {groupedByCategory.map((group) => (
+              <CategoryShelf key={group.slug} group={group} />
+            ))}
+          </div>
         ) : (
           <div className="fluid-product-grid">
             {filteredProducts.map((product) => (

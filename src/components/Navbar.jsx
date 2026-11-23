@@ -3,10 +3,11 @@
 import Link from "next/link";
 import { useRouter, usePathname } from "next/navigation";
 import { useState, useEffect, useRef } from "react";
-import { Search, ShoppingBag, Heart, ArrowRight, X, Menu } from "lucide-react";
+import { Search, ShoppingBag, Heart, ArrowRight, ArrowUpRight, X, Menu } from "lucide-react";
 import { useWishlist } from "@/components/WishlistProvider";
 
 const EDITORIAL_NAV = [
+  { name: "Home", href: "/" },
   { name: "Collections", href: "/#disciplines" },
   { name: "New Season", href: "/#season" },
   { name: "Archive", href: "/#creations" },
@@ -34,8 +35,28 @@ export default function Navbar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  const [mobileEmail, setMobileEmail] = useState("");
+  const [mobileSubscribed, setMobileSubscribed] = useState(false);
   const [isLogoOnDark, setIsLogoOnDark] = useState(pathname === "/");
   const [isRightNavOnDark, setIsRightNavOnDark] = useState(false);
+
+  // Lock page & Lenis scroll while full-screen mobile menu is open
+  useEffect(() => {
+    if (!isMobileMenuOpen) return;
+    const prevOverflow = document.documentElement.style.overflow;
+    document.documentElement.style.overflow = "hidden";
+    window.__ffLenis?.stop();
+
+    const handleEsc = (e) => {
+      if (e.key === "Escape") setIsMobileMenuOpen(false);
+    };
+    window.addEventListener("keydown", handleEsc);
+    return () => {
+      document.documentElement.style.overflow = prevOverflow;
+      window.__ffLenis?.start();
+      window.removeEventListener("keydown", handleEsc);
+    };
+  }, [isMobileMenuOpen]);
 
   // Focus search input on open & close on Escape / outside click
   useEffect(() => {
@@ -186,7 +207,7 @@ export default function Navbar() {
                         ? "text-white hover:text-[#E0535C]"
                         : "text-[var(--text-primary)] hover:text-[#9E2A30]"
                     } ${
-                      idx === 0
+                      item.href === "/" && pathname === "/"
                         ? isRightNavOnDark
                           ? "underline underline-offset-4 decoration-white"
                           : "underline underline-offset-4 decoration-[var(--text-primary)]"
@@ -342,41 +363,156 @@ export default function Navbar() {
           </form>
         </div>
 
-        {/* Animated Mobile Editorial Navigation Drawer */}
+        {/* Full-Screen Lusion-Inspired Mobile Menu (Fuego Forge Theme) */}
         <div
           aria-hidden={!isMobileMenuOpen}
-          className={`lg:hidden origin-top transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] overflow-hidden ${
+          className={`fixed inset-0 z-[70] lg:hidden bg-[#6E2628] transition-all duration-350 ease-[cubic-bezier(0.22,1,0.36,1)] overflow-y-auto ${
             isMobileMenuOpen
-              ? "mt-2 max-h-[420px] pointer-events-auto opacity-100 translate-y-0 scale-100"
-              : "mt-0 max-h-0 pointer-events-none opacity-0 -translate-y-2 scale-[0.98]"
+              ? "pointer-events-auto opacity-100"
+              : "pointer-events-none opacity-0"
           }`}
         >
-          <div className="rounded-[12px] border border-[var(--border-light)] bg-[var(--bg-card)]/95 backdrop-blur-xl p-5 space-y-4 shadow-lg">
-            <div className="flex flex-wrap gap-4 pb-3 border-b border-[var(--border-light)]">
-              {EDITORIAL_NAV.map((item) => (
-                <Link
-                  key={item.name}
-                  href={item.href}
-                  onClick={() => setIsMobileMenuOpen(false)}
-                  className="text-xs font-poppins font-medium text-[#9E2A30]"
-                >
-                  {item.name}
-                </Link>
-              ))}
+          <div className="min-h-full flex flex-col justify-between p-4 sm:p-6 gap-3.5">
+            {/* Top Bar: Brand Wordmark + Crisp Ivory Circular Close Button */}
+            <div className="flex items-center justify-between px-1 pt-1 pb-2">
+              <Link
+                href="/"
+                onClick={() => setIsMobileMenuOpen(false)}
+                className="font-cinzel-decorative uppercase tracking-wide text-lg text-[#FAF7F2]"
+              >
+                Fuego Forge
+              </Link>
+              <button
+                type="button"
+                onClick={() => setIsMobileMenuOpen(false)}
+                aria-label="Close Navigation Menu"
+                className="w-10 h-10 rounded-full bg-[#FAF7F2] text-[#171515] hover:bg-[#171515] hover:text-white flex items-center justify-center shadow-sm transition-all duration-200 active:scale-90 cursor-pointer"
+              >
+                <X className="w-4 h-4" />
+              </button>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-              {MOBILE_CATEGORIES.map((cat) => (
-                <Link
-                  key={cat.name}
-                  href={cat.href}
-                  onClick={() => setIsMobileMenuOpen(false)}
-                  className="flex items-center justify-between text-xs font-poppins font-medium text-[var(--text-primary)] hover:text-[#9E2A30] py-2.5 px-3.5 rounded-[8px] border border-[var(--border-light)] bg-[var(--bg-primary)] transition-all duration-200 active:scale-[0.98]"
-                >
-                  <span>{cat.name}</span>
-                  <ArrowRight className="w-3 h-3 text-[var(--text-muted)]" />
-                </Link>
-              ))}
+            {/* Stacked Floating Warm-Ivory Cards */}
+            <div className="flex-1 flex flex-col gap-3">
+              {/* Card 1: Primary Navigation Links */}
+              <nav
+                aria-label="Mobile Navigation"
+                className={`rounded-2xl bg-[#FAF7F2] p-5 sm:p-6 flex flex-col gap-3.5 transition-all duration-400 ease-[cubic-bezier(0.22,1,0.36,1)] ${
+                  isMobileMenuOpen ? "translate-y-0 opacity-100 delay-75" : "translate-y-4 opacity-0"
+                }`}
+              >
+                {EDITORIAL_NAV.map((item) => {
+                  const isActive = item.href === "/" && pathname === "/";
+                  return (
+                    <Link
+                      key={item.name}
+                      href={item.href}
+                      onClick={() => setIsMobileMenuOpen(false)}
+                      className="flex items-center justify-between py-1 text-[17px] font-poppins font-medium uppercase tracking-[0.06em] text-[#171515] hover:text-[#9E2A30] transition-colors"
+                    >
+                      <span>{item.name}</span>
+                      {isActive && (
+                        <span className="w-2 h-2 rounded-full bg-[#9E2A30] shrink-0" />
+                      )}
+                    </Link>
+                  );
+                })}
+              </nav>
+
+              {/* Card 2: Atelier Newsletter Dispatch */}
+              <div
+                className={`rounded-2xl bg-[#FAF7F2] p-5 sm:p-6 space-y-4 transition-all duration-400 ease-[cubic-bezier(0.22,1,0.36,1)] ${
+                  isMobileMenuOpen
+                    ? "translate-y-0 opacity-100 delay-150"
+                    : "translate-y-4 opacity-0"
+                }`}
+              >
+                <h3 className="font-editorial text-[1.95rem] leading-[1.06] text-[#171515] font-normal">
+                  Join the Fuego Forge
+                  <br />
+                  private atelier
+                </h3>
+
+                {mobileSubscribed ? (
+                  <p className="text-xs font-poppins text-[#9E2A30] font-medium py-2">
+                    Welcome to the Fuego Forge private list.
+                  </p>
+                ) : (
+                  <form
+                    onSubmit={(e) => {
+                      e.preventDefault();
+                      if (mobileEmail.trim()) {
+                        setMobileSubscribed(true);
+                        setMobileEmail("");
+                      }
+                    }}
+                    className="flex items-center gap-2 rounded-2xl bg-[#EFECE6] px-4 py-3 border border-[#171515]/8 focus-within:border-[#6E2628] transition-colors"
+                  >
+                    <input
+                      type="email"
+                      required
+                      value={mobileEmail}
+                      onChange={(e) => setMobileEmail(e.target.value)}
+                      placeholder="Your email"
+                      className="flex-1 bg-transparent text-sm font-poppins text-[#171515] placeholder:text-[#8E867E] focus:outline-none"
+                    />
+                    <button
+                      type="submit"
+                      aria-label="Subscribe to newsletter"
+                      className="p-1 text-[#171515] hover:text-[#9E2A30] transition-colors active:scale-90 cursor-pointer"
+                    >
+                      <ArrowRight className="w-4 h-4" />
+                    </button>
+                  </form>
+                )}
+              </div>
+
+              {/* Card 3: Saved Pieces Drawer Trigger */}
+              <button
+                type="button"
+                onClick={() => {
+                  setIsMobileMenuOpen(false);
+                  setIsWishlistOpen(true);
+                }}
+                className={`w-full rounded-2xl bg-[#FAF7F2] px-5 sm:px-6 py-4 flex items-center justify-between text-[#171515] hover:text-[#9E2A30] transition-all duration-400 ease-[cubic-bezier(0.22,1,0.36,1)] active:scale-[0.98] cursor-pointer ${
+                  isMobileMenuOpen
+                    ? "translate-y-0 opacity-100 delay-200"
+                    : "translate-y-4 opacity-0"
+                }`}
+              >
+                <span className="flex items-center gap-2.5 text-sm font-poppins font-medium uppercase tracking-[0.08em]">
+                  <span>Saved Pieces</span>
+                  {wishlistItems.length > 0 && (
+                    <span className="px-2 py-0.5 rounded-full bg-[#9E2A30] text-white text-[10px] font-semibold">
+                      {wishlistItems.length}
+                    </span>
+                  )}
+                </span>
+                <Heart
+                  className={`w-4 h-4 ${
+                    wishlistItems.length > 0 ? "fill-[#9E2A30] text-[#9E2A30]" : ""
+                  }`}
+                />
+              </button>
+
+              {/* Card 4: Dark Obsidian Etsy Boutique CTA */}
+              <a
+                href="https://fuegoforge.etsy.com?ref=share_and_save"
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={() => setIsMobileMenuOpen(false)}
+                className={`w-full rounded-2xl bg-[#171515] px-5 sm:px-6 py-4 flex items-center justify-between text-[#FAF7F2] hover:bg-[#1F1C1B] transition-all duration-400 ease-[cubic-bezier(0.22,1,0.36,1)] active:scale-[0.98] ${
+                  isMobileMenuOpen
+                    ? "translate-y-0 opacity-100 delay-300"
+                    : "translate-y-4 opacity-0"
+                }`}
+              >
+                <span className="flex items-center gap-3 text-sm font-poppins font-medium uppercase tracking-[0.1em]">
+                  <span className="w-2 h-2 rotate-45 bg-[#D9464F] inline-block" />
+                  <span>Shop Etsy Boutique</span>
+                </span>
+                <ArrowUpRight className="w-4 h-4 text-[#FAF7F2]/80" />
+              </a>
             </div>
           </div>
         </div>
