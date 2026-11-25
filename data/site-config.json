@@ -124,7 +124,44 @@
     "headingLine1": "The New Season",
     "headingLine2": "Collection",
     "description": "Pieces defined by clean lines, sculptural details, and a refined sense of modern luxury.",
-    "covers": {}
+    "covers": {
+      "rings": {
+        "image": "https://i.etsystatic.com/58316748/r/il/455892/8910424222/il_fullxfull.8910424222_fj60.jpg",
+        "order": 0
+      },
+      "masquerade-masks": {
+        "image": "https://i.etsystatic.com/58316748/r/il/79bfb1/8825878594/il_fullxfull.8825878594_tivc.jpg",
+        "order": 3
+      },
+      "body-jewelry": {
+        "order": 1,
+        "image": "https://i.etsystatic.com/58316748/r/il/4c9386/8876869832/il_fullxfull.8876869832_8nql.jpg"
+      },
+      "hair-accessories": {
+        "order": 2,
+        "image": "https://i.etsystatic.com/58316748/r/il/631b2b/8904459434/il_fullxfull.8904459434_em9b.jpg"
+      },
+      "earrings": {
+        "order": 4,
+        "image": "https://i.etsystatic.com/58316748/r/il/be3a5d/8946065153/il_fullxfull.8946065153_8bz2.jpg"
+      },
+      "necklaces": {
+        "order": 5,
+        "image": "https://i.etsystatic.com/58316748/r/il/ca5e52/8756490233/il_fullxfull.8756490233_6p1x.jpg"
+      },
+      "jewelry-sets": {
+        "order": 6,
+        "image": "https://i.etsystatic.com/58316748/r/il/ae26c6/8862105530/il_fullxfull.8862105530_k6tx.jpg"
+      },
+      "jewelry-boxes": {
+        "order": 7,
+        "image": "https://i.etsystatic.com/58316748/r/il/473e5b/8835801838/il_fullxfull.8835801838_ddxf.jpg"
+      },
+      "bracelets": {
+        "order": 8,
+        "image": "https://i.etsystatic.com/58316748/r/il/4ef581/8816645630/il_fullxfull.8816645630_bw2a.jpg"
+      }
+    }
   },
   "splitPortrait": {
     "enabled": true,
@@ -167,14 +204,14 @@
   "promoModal": {
     "enabled": true,
     "brandLabel": "Fuego Forge",
-    "eyebrow": "Atelier Privilege",
+    "eyebrow": "",
     "headline": "50% Off",
     "headlineAccent": "Sitewide",
     "description": "Handcrafted fine jewelry with complimentary tracked worldwide delivery on Etsy.",
-    "ctaLabel": "Shop 50% Off on Etsy",
+    "ctaLabel": "Shop 55% Off on Etsy",
     "ctaHref": "https://fuegoforge.etsy.com?ref=share_and_save",
     "image": "https://images.unsplash.com/photo-1617038260897-41a1f14a8ca0?auto=format&fit=crop&w=900&q=85",
-    "delaySeconds": 9
+    "delaySeconds": 6
   },
   "footer": {
     "videoUrl": "/Footer-BG.mp4",
@@ -195,5 +232,5 @@
       "/loader-bg-4.webp"
     ]
   },
-  "updatedAt": "2026-11-25T10:58:49.362Z"
+  "updatedAt": "2026-11-25T11:22:00.532Z"
 }
