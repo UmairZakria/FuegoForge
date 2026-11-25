@@ -1,0 +1,199 @@
+{
+  "announcement": {
+    "enabled": true,
+    "href": "https://fuegoforge.etsy.com?ref=share_and_save",
+    "items": [
+      "50% Off Boutique Privilege on Etsy",
+      "Complimentary Tracked Worldwide Delivery",
+      "100% Handcrafted Artisan Fine Jewelry",
+      "30-Day Verified Etsy Buyer Protection",
+      "Complimentary Luxury Gift Box Included"
+    ]
+  },
+  "hero": {
+    "slides": [
+      "/hero-editorial.webp",
+      "/hero2_transparent.webp"
+    ],
+    "intervalMs": 9500,
+    "headlineAccent": "NOT FOR",
+    "headlineMuted": "SOMEDAY",
+    "headlineLine2": "MADE TO LIVE IN",
+    "eyebrow": "FUEGO FORGE",
+    "subtextLine1": "Made for skin, not display.",
+    "subtextLine2": "Made to order. Worn every day.",
+    "ctaLabel": "Shop on Etsy",
+    "ctaHref": "https://fuegoforge.etsy.com?ref=share_and_save",
+    "bottomManifesto": [
+      "made to order.",
+      "fitted in person.",
+      "worn every day after."
+    ],
+    "bottomCategoryLinks": [
+      {
+        "label": "earrings",
+        "href": "/category/earrings",
+        "active": true
+      },
+      {
+        "label": "necklaces",
+        "href": "/category/necklaces",
+        "active": false
+      },
+      {
+        "label": "bracelets",
+        "href": "/category/bracelets",
+        "active": false
+      },
+      {
+        "label": "hairpins",
+        "href": "/category/hair-accessories",
+        "active": false
+      }
+    ],
+    "previewCards": [
+      {
+        "id": "hero-preview-1",
+        "label": "Earrings",
+        "caption": "many, worn as one",
+        "ctaText": "See more",
+        "mode": "product",
+        "productSlug": "pear-moissanite-huggie-hoops-gold-bezel-minimalist-bridal-earrings",
+        "categorySlug": "earrings",
+        "customVideoUrl": "",
+        "customPosterUrl": "",
+        "customHref": ""
+      },
+      {
+        "id": "hero-preview-2",
+        "label": "Necklace",
+        "caption": "a single stone, close to the skin",
+        "ctaText": "See more",
+        "mode": "product",
+        "productSlug": "birth-flower-necklace-for-mom-personalized-flower-pendant-14k-gold-pla",
+        "categorySlug": "necklaces",
+        "customVideoUrl": "",
+        "customPosterUrl": "",
+        "customHref": ""
+      }
+    ]
+  },
+  "bento": {
+    "card1": {
+      "eyebrow": "The Aurelia Collection",
+      "title": "Where Timeless Beauty Meets Craft",
+      "ctaLabel": "Shop Now",
+      "ctaHref": "/category/necklaces",
+      "mediaMode": "product",
+      "productSlug": "gold-plated-moon-nose-hoop-20g-nostril-piercing-celestial-body-jewel",
+      "preferVideo": true,
+      "customImageUrl": "https://i.etsystatic.com/58316748/r/il/4da9f8/8756490273/il_fullxfull.8756490273_r2i0.jpg",
+      "customVideoUrl": ""
+    },
+    "card2": {
+      "eyebrow": "The Lumina Line",
+      "title": "Captivating Styles for Everyday",
+      "ctaLabel": "Have A Look",
+      "ctaHref": "/category/earrings",
+      "mediaMode": "custom",
+      "productSlug": "",
+      "preferVideo": false,
+      "customImageUrl": "https://i.etsystatic.com/58316748/r/il/c6bca4/8802651737/il_fullxfull.8802651737_orgb.jpg",
+      "customVideoUrl": ""
+    },
+    "card3": {
+      "eyebrow": "The Novara Series",
+      "title": "Sculpted for City Living",
+      "ctaLabel": "Visit Now",
+      "ctaHref": "/category/bracelets",
+      "mediaMode": "product",
+      "productSlug": "gold-tone-pearl-huggie-hoop-earrings-minimalist-freshwater-pearl-drop",
+      "preferVideo": true,
+      "customImageUrl": "https://i.etsystatic.com/58316748/r/il/67478a/8772228592/il_fullxfull.8772228592_hgds.jpg",
+      "customVideoUrl": ""
+    },
+    "card4": {
+      "eyebrow": "The Atelier Edit",
+      "title": "Exclusive Luxe",
+      "highlight": "50%",
+      "ctaLabel": "Shop Now",
+      "ctaHref": "https://fuegoforge.etsy.com?ref=share_and_save"
+    }
+  },
+  "categoriesSection": {
+    "headingLine1": "The New Season",
+    "headingLine2": "Collection",
+    "description": "Pieces defined by clean lines, sculptural details, and a refined sense of modern luxury.",
+    "covers": {}
+  },
+  "splitPortrait": {
+    "enabled": true,
+    "image": "https://images.unsplash.com/photo-1596944924616-7b38e7cfac36?auto=format&fit=crop&w=1400&q=82",
+    "headlineLine1": "Luxury That",
+    "headlineLine2": "Moves With Every",
+    "headlineLine3": "Journey.",
+    "ctaLabel": "Shop Now",
+    "ctaHref": "#creations"
+  },
+  "journal": {
+    "enabled": true,
+    "headingLine1": "Stories of",
+    "headingLine2": "Light & Form",
+    "description": "Explore the stories, inspirations, and craftsmanship behind the world of FUEGO FORGE.",
+    "stories": [
+      {
+        "id": "story-1",
+        "title": "Crafted for moments that deserve to feel extraordinary.",
+        "readTime": "4 Min Read",
+        "image": "https://images.unsplash.com/photo-1617038260897-41a1f14a8ca0?auto=format&fit=crop&w=1200&q=85",
+        "alt": "Sculpted gold hoop earrings resting on travertine stone"
+      },
+      {
+        "id": "story-2",
+        "title": "Discover the artistry and craftsmanship behind every piece.",
+        "readTime": "7 Min Read",
+        "image": "https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?auto=format&fit=crop&w=1200&q=85",
+        "alt": "Layered gold crescent and gemstone pendant necklaces"
+      },
+      {
+        "id": "story-3",
+        "title": "Explore timeless designs crafted for everyday elegance.",
+        "readTime": "9 Min Read",
+        "image": "https://images.unsplash.com/photo-1611591437281-460bfbe1220a?auto=format&fit=crop&w=1200&q=85",
+        "alt": "Intricate gold and crystal filigree bracelet on warm ivory"
+      }
+    ]
+  },
+  "promoModal": {
+    "enabled": true,
+    "brandLabel": "Fuego Forge",
+    "eyebrow": "Atelier Privilege",
+    "headline": "50% Off",
+    "headlineAccent": "Sitewide",
+    "description": "Handcrafted fine jewelry with complimentary tracked worldwide delivery on Etsy.",
+    "ctaLabel": "Shop 50% Off on Etsy",
+    "ctaHref": "https://fuegoforge.etsy.com?ref=share_and_save",
+    "image": "https://images.unsplash.com/photo-1617038260897-41a1f14a8ca0?auto=format&fit=crop&w=900&q=85",
+    "delaySeconds": 9
+  },
+  "footer": {
+    "videoUrl": "/Footer-BG.mp4",
+    "headlineLine1": "Forged in",
+    "headlineAccent": "Shadow & Gold.",
+    "description": "Receive private invitations to small-batch drops, archival releases, and our direct 50% off boutique privilege on Etsy.",
+    "cardText": "Direct from our studio workbench to your skin.",
+    "ctaLabel": "Shop Etsy",
+    "ctaHref": "https://fuegoforge.etsy.com?ref=share_and_save",
+    "quote": "Not for someday. Handcrafted fine jewelry forged to live in.",
+    "subQuote": "Every piece is individually sculpted and finished by hand with worldwide tracked delivery and official Etsy buyer protection."
+  },
+  "pageLoader": {
+    "backgrounds": [
+      "/loader-bg.webp",
+      "/loader-bg-2.webp",
+      "/loader-bg-3.webp",
+      "/loader-bg-4.webp"
+    ]
+  },
+  "updatedAt": "2026-11-25T10:58:49.362Z"
+}
