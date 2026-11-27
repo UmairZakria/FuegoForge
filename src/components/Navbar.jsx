@@ -39,6 +39,7 @@ export default function Navbar() {
   const [mobileSubscribed, setMobileSubscribed] = useState(false);
   const [isLogoOnDark, setIsLogoOnDark] = useState(pathname === "/");
   const [isRightNavOnDark, setIsRightNavOnDark] = useState(false);
+  const [isScrolledPastRibbon, setIsScrolledPastRibbon] = useState(false);
 
   // Lock page & Lenis scroll while full-screen mobile menu is open
   useEffect(() => {
@@ -88,6 +89,7 @@ export default function Navbar() {
 
     const detectContrast = () => {
       rafId = 0;
+      setIsScrolledPastRibbon(window.scrollY > 28);
       const navY = 38;
       const heroPortrait = document.querySelector("[data-hero-portrait]");
       const heroBottomBar = document.querySelector("[data-hero-bottom-bar]");
@@ -154,7 +156,12 @@ export default function Navbar() {
   };
 
   return (
-    <header ref={headerRef} className="fixed top-3 sm:top-4 inset-x-0 z-50 pointer-events-none">
+    <header
+      ref={headerRef}
+      className={`fixed inset-x-0 z-50 pointer-events-none transition-[top] duration-300 ease-out ${
+        isScrolledPastRibbon ? "top-3 sm:top-4" : "top-9 sm:top-10"
+      }`}
+    >
       <div className="layout-shell">
         {/* Floating Translucent Editorial Glass Bar */}
         <div className="pointer-events-auto px-3.5 py-3 sm:p-5 flex items-center justify-between gap-3 sm:gap-4 rounded-[4px]">

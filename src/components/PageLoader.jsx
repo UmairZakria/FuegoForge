@@ -2,14 +2,21 @@
 
 import { useEffect, useRef, useState } from "react";
 import gsap from "gsap";
+import siteConfig from "@/lib/site-config";
 
-const PRIMARY_HERO_SRC = "/hero-editorial.webp";
-const LOADER_BACKGROUNDS = [
-  "/loader-bg.webp",
-  "/loader-bg-2.webp",
-  "/loader-bg-3.webp",
-  "/loader-bg-4.webp",
-];
+const PRIMARY_HERO_SRC =
+  (Array.isArray(siteConfig?.hero?.slides) && siteConfig.hero.slides[0]) ||
+  "/hero-editorial.webp";
+const LOADER_BACKGROUNDS =
+  Array.isArray(siteConfig?.pageLoader?.backgrounds) &&
+  siteConfig.pageLoader.backgrounds.length > 0
+    ? siteConfig.pageLoader.backgrounds
+    : [
+        "/loader-bg.webp",
+        "/loader-bg-2.webp",
+        "/loader-bg-3.webp",
+        "/loader-bg-4.webp",
+      ];
 const RING_RADIUS = 94;
 const RING_CIRCUMFERENCE = 2 * Math.PI * RING_RADIUS;
 
@@ -88,6 +95,7 @@ export default function PageLoader() {
   const rootRef = useRef(null);
   const bgRef = useRef(null);
   const bgImgRef = useRef(null);
+  const topBarRef = useRef(null);
   const curvePathRef = useRef(null);
   const ringWrapRef = useRef(null);
   const ringArcRef = useRef(null);
@@ -197,16 +205,23 @@ export default function PageLoader() {
         },
       });
 
-      // 2. Fade & subtly scale out the minimalist ring
+      // 2. Fade & subtly scale out the minimalist ring and top chrome
       tl.to(
-        ringWrapRef.current,
+        [ringWrapRef.current, topBarRef.current],
         {
-          scale: 0.94,
           opacity: 0,
           duration: 0.38,
           ease: "power3.in",
         },
         "+=0.06"
+      ).to(
+        ringWrapRef.current,
+        {
+          scale: 0.94,
+          duration: 0.38,
+          ease: "power3.in",
+        },
+        "<"
       );
 
       // 3. Lusion-style curved center-arch curtain sweep on the solid photo background
@@ -317,15 +332,32 @@ export default function PageLoader() {
       </svg>
 
       {/* 100% Solid Opaque Background Photo + Subtle Dark Scrim */}
-      <div ref={bgRef} className="absolute inset-0 bg-[#0E0C0B]">
+      <div ref={bgRef} className="absolute inset-0 ">
         <img
           ref={bgImgRef}
           alt=""
           loading="eager"
           decoding="async"
-          className="w-full h-full object-cover object-center"
+          className="w-full h-full object-cover  object-center"
         />
-        <div className="absolute inset-0 bg-black/45" />
+      </div>
+
+      {/* Minimalist Visual Top Chrome: Brand Wordmark (Left) + Staggered Menu Bars (Right) */}
+      <div
+        ref={topBarRef}
+        aria-hidden="true"
+        className="absolute top-0 inset-x-0 z-10 pointer-events-none flex items-center justify-between px-6 sm:px-10 lg:px-14 pt-6 sm:pt-8"
+      >
+        <span className="font-cinzel-decorative uppercase  text-sm md:text-3xl text-white">
+          Fuego Forge
+        </span>
+
+        {/* Decorative Staggered 3-Line Editorial Menu Icon */}
+        <span className="flex flex-col items-end gap-[5px] gap-y-[8px]">
+          <span className="block w-5 h-[1.5px] bg-[#FAF7F2]/90 rounded-full" />
+          <span className="block w-6 h-[1.5px] bg-[#FAF7F2]/90 rounded-full -translate-x-1.5" />
+          <span className="block w-5 h-[1.5px] bg-[#FAF7F2]/90 rounded-full" />
+        </span>
       </div>
 
       {/* Minimalist Aesthetic Circular Progress Ring + Centered Number */}
@@ -360,7 +392,7 @@ export default function PageLoader() {
           />
         </svg>
 
-        <span className="font-editorial text-[clamp(3.2rem,5.5vw,4.8rem)] font-light leading-none tracking-[-0.02em] tabular-nums text-[#F3ECC8]">
+        <span className="font-cinzel-decorative text-[clamp(3.2rem,5.5vw,4.8rem)] font-light leading-none tracking-[-0.02em] tabular-nums text-[#F3ECC8]">
           {String(count).padStart(2, "0")}
         </span>
       </div>

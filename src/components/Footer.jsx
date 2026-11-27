@@ -4,10 +4,12 @@ import { useState } from "react";
 import Link from "next/link";
 import { ArrowRight, ArrowUpRight, ExternalLink } from "lucide-react";
 import FluidHoverVideo from "@/components/FluidHoverVideo";
+import siteConfig from "@/lib/site-config";
 
 export default function Footer() {
   const [email, setEmail] = useState("");
   const [subscribed, setSubscribed] = useState(false);
+  const f = siteConfig?.footer || {};
 
   const handleSubscribe = (e) => {
     e.preventDefault();
@@ -20,11 +22,11 @@ export default function Footer() {
   return (
     <footer className="relative z-10 min-h-[88vh] flex flex-col justify-between bg-[#141110] text-[#FAF7F2] overflow-hidden border-t border-[var(--border-dark)]">
       {/* =====================================================================
-          1. FULL-BLEED CINEMATIC BACKGROUND VIDEO (/Footer-BG.mp4)
+          1. FULL-BLEED CINEMATIC BACKGROUND VIDEO
          ===================================================================== */}
       <div className="absolute inset-0 select-none pointer-events-none">
         <FluidHoverVideo
-          src="/Footer-BG.mp4"
+          src={f.videoUrl || "/Footer-BG.mp4"}
           preload="none"
           objectPosition={[0.58, 0.22]}
           strength={0.26}
@@ -44,12 +46,15 @@ export default function Footer() {
           {/* Left 7 Columns: Bold Editorial Headline + Frosted Glass Dispatch Card */}
           <div className="lg:col-span-7 space-y-6">
             <h2 className="font-editorial text-[clamp(2.5rem,5vw,5.6rem)] font-light uppercase leading-[0.94] tracking-[-0.02em] text-white drop-shadow-[0_4px_24px_rgba(0,0,0,0.5)]">
-              Forged in <br />
-              <span className="italic font-normal text-[#D9464F]">Shadow &amp; Gold.</span>
+              {f.headlineLine1 || "Forged in"} <br />
+              <span className="italic font-normal text-[#D9464F]">
+                {f.headlineAccent || "Shadow & Gold."}
+              </span>
             </h2>
 
             <p className="font-poppins text-[length:var(--text-sm)] text-white/90 font-normal max-w-md leading-relaxed drop-shadow-[0_1px_8px_rgba(0,0,0,0.4)]">
-              Receive private invitations to small-batch drops, archival releases, and our direct 50% off boutique privilege on Etsy.
+              {f.description ||
+                "Receive private invitations to small-batch drops, archival releases, and our direct 50% off boutique privilege on Etsy."}
             </p>
 
             {/* Frosted Glass Newsletter Bar */}
@@ -87,15 +92,15 @@ export default function Footer() {
           <div className="lg:col-span-5 flex lg:justify-end">
             <div className="p-5 sm:p-6 rounded-[12px] bg-[#141110]/75 backdrop-blur-md border border-white/20 max-w-xs w-full space-y-4">
               <p className="font-poppins text-sm sm:text-base font-normal text-white leading-relaxed">
-                Direct from our studio workbench to your skin.
+                {f.cardText || "Direct from our studio workbench to your skin."}
               </p>
               <a
-                href="https://fuegoforge.etsy.com?ref=share_and_save"
+                href={f.ctaHref || "https://fuegoforge.etsy.com?ref=share_and_save"}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="w-full inline-flex items-center justify-between px-4 py-2.5 rounded-[6px] bg-white hover:bg-[#9E2A30] text-[#171515] hover:text-white text-[11px] font-poppins font-semibold uppercase  transition-colors"
               >
-                <span>Shop Etsy </span>
+                <span>{f.ctaLabel || "Shop Etsy"}</span>
                 <ArrowUpRight className="w-3.5 h-3.5" />
               </a>
             </div>
@@ -112,10 +117,11 @@ export default function Footer() {
           {/* Philosophy */}
           <div className="lg:col-span-4 space-y-3">
             <p className="font-poppins text-sm sm:text-base text-white font-medium max-w-sm leading-relaxed">
-              &ldquo;Not for someday. Handcrafted fine jewelry forged to live in.&rdquo;
+              &ldquo;{f.quote || "Not for someday. Handcrafted fine jewelry forged to live in."}&rdquo;
             </p>
             <p className="text-xs text-white/80 font-poppins leading-relaxed max-w-sm font-light">
-              Every piece is individually sculpted and finished by hand with worldwide tracked delivery and official Etsy buyer protection.
+              {f.subQuote ||
+                "Every piece is individually sculpted and finished by hand with worldwide tracked delivery and official Etsy buyer protection."}
             </p>
           </div>
 

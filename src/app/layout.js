@@ -11,6 +11,8 @@ import Footer from "@/components/Footer";
 import SmoothScroll from "@/components/SmoothScroll";
 import PageLoader from "@/components/PageLoader";
 import FluidCursorCanvas from "@/components/FluidCursorCanvas";
+import PromoModal from "@/components/PromoModal";
+import AnnouncementRibbon from "@/components/AnnouncementRibbon";
 import { WishlistProvider } from "@/components/WishlistProvider";
 
 const cormorant = Cormorant_Garamond({
@@ -159,8 +161,10 @@ export default function RootLayout({ children }) {
       <body className="min-h-screen flex flex-col bg-[var(--bg-primary)] text-[var(--text-primary)]">
         <WishlistProvider>
           <PageLoader />
+          <PromoModal />
           <FluidCursorCanvas />
           <SmoothScroll />
+          <AnnouncementRibbon />
           <Navbar />
           <main className="flex-1 relative z-10">{children}</main>
           <Footer />

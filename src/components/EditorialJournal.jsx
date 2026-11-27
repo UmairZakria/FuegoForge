@@ -1,7 +1,8 @@
 import Parallax from "@/components/Parallax";
 import FluidHoverImage from "@/components/FluidHoverImage";
+import siteConfig from "@/lib/site-config";
 
-const JOURNAL_STORIES = [
+const DEFAULT_JOURNAL_STORIES = [
   {
     id: "story-1",
     title: "Crafted for moments that deserve to feel extraordinary.",
@@ -29,6 +30,10 @@ const JOURNAL_STORIES = [
 ];
 
 export default function EditorialJournal() {
+  const j = siteConfig?.journal || {};
+  const stories =
+    Array.isArray(j.stories) && j.stories.length > 0 ? j.stories : DEFAULT_JOURNAL_STORIES;
+
   return (
     <section
       id="journal"
@@ -37,18 +42,19 @@ export default function EditorialJournal() {
       {/* Top Header Split */}
       <div className="flex flex-col md:flex-row md:items-start justify-between gap-6">
         <h2 className="font-editorial type-h1 font-light uppercase text-[var(--text-primary)] tracking-[-0.01em] leading-[0.98]">
-          Stories of <br />
-          Light &amp; Form
+          {j.headingLine1 || "Stories of"} <br />
+          {j.headingLine2 || "Light & Form"}
         </h2>
 
         <p className="font-poppins text-[length:var(--text-sm)] text-[var(--text-secondary)] font-light leading-relaxed max-w-xs md:text-right">
-          Explore the stories, inspirations, and craftsmanship behind the world of FUEGO FORGE.
+          {j.description ||
+            "Explore the stories, inspirations, and craftsmanship behind the world of FUEGO FORGE."}
         </p>
       </div>
 
       {/* Mobile Horizontal Swipe Track / Desktop 3-Column Editorial Article Grid */}
       <div className="-mx-[var(--page-gutter)] px-[var(--page-gutter)] md:mx-0 md:px-0 flex md:grid md:grid-cols-3 gap-[var(--grid-gap)] overflow-x-auto md:overflow-visible snap-x snap-mandatory scroll-smooth pb-2 md:pb-0 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-        {JOURNAL_STORIES.map((story) => (
+        {stories.map((story) => (
           <article
             key={story.id}
             className="group shrink-0 w-[82%] sm:w-[62%] md:w-auto snap-start bg-[#FAF7F2] border border-[var(--border-light)] rounded-[14px] p-4 sm:p-5 flex flex-col justify-between gap-4 hover:border-[var(--border-strong)] transition-colors"

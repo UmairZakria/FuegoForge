@@ -5,9 +5,11 @@ import Link from "next/link";
 import { ArrowLeft, ArrowRight, ArrowUpRight } from "lucide-react";
 import Parallax from "@/components/Parallax";
 import FluidHoverImage from "@/components/FluidHoverImage";
+import siteConfig from "@/lib/site-config";
 
 export default function CategoryCarousel({ categories = [] }) {
   const trackRef = useRef(null);
+  const catSec = siteConfig?.categoriesSection || {};
 
   const scrollByCard = (direction) => {
     const el = trackRef.current;
@@ -24,13 +26,14 @@ export default function CategoryCarousel({ categories = [] }) {
       {/* Top Header Split */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
         <h2 className="font-editorial type-h1 font-light uppercase text-[var(--text-primary)] tracking-[-0.01em] leading-[0.98]">
-          The New Season <br />
-          Collection
+          {catSec.headingLine1 || "The New Season"} <br />
+          {catSec.headingLine2 || "Collection"}
         </h2>
 
         <div className="flex flex-col sm:flex-row md:flex-col items-start md:items-end justify-between gap-4 max-w-xs">
           <p className="font-poppins text-[length:var(--text-sm)] text-[var(--text-secondary)] font-light leading-relaxed md:text-right">
-            Pieces defined by clean lines, sculptural details, and a refined sense of modern luxury.
+            {catSec.description ||
+              "Pieces defined by clean lines, sculptural details, and a refined sense of modern luxury."}
           </p>
 
           <div className="flex items-center gap-2">

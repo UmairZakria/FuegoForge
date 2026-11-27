@@ -1,10 +1,14 @@
 import { ArrowUpRight } from "lucide-react";
 import FluidHoverImage from "@/components/FluidHoverImage";
+import siteConfig from "@/lib/site-config";
 
-const PORTRAIT_IMAGE =
+const DEFAULT_PORTRAIT_IMAGE =
   "https://images.unsplash.com/photo-1596944924616-7b38e7cfac36?auto=format&fit=crop&w=1400&q=82";
 
 export default function SplitPortraitGrid() {
+  const sp = siteConfig?.splitPortrait || {};
+  const portraitImage = sp.image || DEFAULT_PORTRAIT_IMAGE;
+
   const tiles = Array.from({ length: 16 }, (_, idx) => ({
     row: Math.floor(idx / 4),
     col: idx % 4,
@@ -16,7 +20,7 @@ export default function SplitPortraitGrid() {
       <div className="relative w-full aspect-square overflow-hidden ">
         {/* Single Optimized Image Layer with Lusion Liquid Hover */}
         <FluidHoverImage
-          src={PORTRAIT_IMAGE}
+          src={portraitImage}
           alt="Fuego Forge Editorial Portrait"
           className="absolute inset-0 w-full h-full select-none"
           strength={0.32}
@@ -41,16 +45,16 @@ export default function SplitPortraitGrid() {
         {/* Overlaid Editorial Headline & CTA in Lower-Right Quadrant */}
         <div className="absolute left-[51.5%] top-[53%] right-[3%] z-10 space-y-3 sm:space-y-4 pointer-events-auto">
           <h2 className="font-editorial text-[clamp(1.35rem,4vw,3.55rem)] font-light text-[#FAF7F2] leading-[1.04] drop-shadow-[0_2px_14px_rgba(23,21,21,0.5)]">
-            Luxury That <br />
-            Moves With Every <br />
-            Journey.
+            {sp.headlineLine1 || "Luxury That"} <br />
+            {sp.headlineLine2 || "Moves With Every"} <br />
+            {sp.headlineLine3 || "Journey."}
           </h2>
 
           <a
-            href="#creations"
+            href={sp.ctaHref || "#creations"}
             className="inline-flex items-center gap-1.5 px-4 sm:px-6 py-2 sm:py-2.5 rounded-[6px] bg-[#FAF7F2] hover:bg-[var(--burgundy)] text-[var(--text-primary)] hover:text-[#FAF7F2] text-xs font-poppins font-medium transition-colors shadow-sm"
           >
-            <span>Shop Now</span>
+            <span>{sp.ctaLabel || "Shop Now"}</span>
             <ArrowUpRight className="w-3.5 h-3.5" />
           </a>
         </div>

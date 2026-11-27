@@ -3,6 +3,7 @@ import Link from "next/link";
 import { getAllProducts, getProductBySlug } from "@/lib/products";
 import ProductGallery from "@/components/ProductGallery";
 import ProductCard from "@/components/ProductCard";
+import ProductReviewsSection from "@/components/ProductReviewsSection";
 import WishlistButton from "@/components/WishlistButton";
 import ProductPageReveal from "@/components/ProductPageReveal";
 import { Star, ArrowRight } from "lucide-react";
@@ -141,6 +142,23 @@ export default async function ProductDetailPage({ params }) {
       ratingValue: Number(product.rating || 4.9).toFixed(1),
       reviewCount: String(product.reviewsCount || 48),
     },
+    ...(Array.isArray(product.reviews) && product.reviews.length > 0
+      ? {
+          review: product.reviews.slice(0, 10).map((rev) => ({
+            "@type": "Review",
+            author: {
+              "@type": "Person",
+              name: rev.author || "Verified Buyer",
+            },
+            reviewRating: {
+              "@type": "Rating",
+              ratingValue: String(rev.rating || 5),
+              bestRating: "5",
+            },
+            reviewBody: rev.text || "",
+          })),
+        }
+      : {}),
   };
 
   const breadcrumbSchema = {
@@ -246,13 +264,16 @@ export default async function ProductDetailPage({ params }) {
                   )}
                 </div>
 
-                <div className="flex items-center gap-1.5 text-xs font-poppins text-[var(--text-secondary)]">
+                <a
+                  href="#customer-reviews"
+                  className="flex items-center gap-1.5 text-xs font-poppins text-[var(--text-secondary)] hover:text-[#171515] transition-colors"
+                >
                   <Star className="w-3.5 h-3.5 fill-[#171515] text-[#171515]" />
                   <span className="font-semibold text-[#171515]">
                     {Number(product.rating || 4.9).toFixed(1)}
                   </span>
                   <span className="text-[var(--text-muted)]">({product.reviewsCount})</span>
-                </div>
+                </a>
               </div>
 
               {/* Bold Architectural CTA Stack */}
@@ -338,6 +359,13 @@ export default async function ProductDetailPage({ params }) {
             </div>
           </div>
         </div>
+
+        {/* Verified Customer Reviews & Photos Section (SSG) */}
+        <ProductReviewsSection
+          reviews={product.reviews || []}
+          rating={product.rating}
+          reviewsCount={product.reviewsCount}
+        />
 
         {/* Related Creations Grid — Left-Aligned Header */}
         {relatedProducts.length > 0 && (

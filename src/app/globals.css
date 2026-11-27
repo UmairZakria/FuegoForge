@@ -207,3 +207,25 @@ body {
 .animate-editorial-in {
   animation: fadeUpSlow 0.85s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
+
+@keyframes ffMarquee {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+
+.animate-ff-marquee {
+  display: flex;
+  width: max-content;
+  animation: ffMarquee 58s linear infinite;
+  will-change: transform;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-ff-marquee {
+    animation: none;
+  }
+}

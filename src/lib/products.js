@@ -1,4 +1,5 @@
 import rawProducts from "../../data/products.json";
+import siteConfig from "@/lib/site-config";
 
 const products = rawProducts.map((product) => ({
   ...product,
@@ -19,16 +20,22 @@ export function getProductsByCategory(categorySlug) {
   return products.filter((p) => p.category === categorySlug);
 }
 
-export function getAllCategories() {
+export function getAllCategories({ includeHidden = false } = {}) {
+  const covers = siteConfig?.categoriesSection?.covers || {};
   const map = new Map();
+  let defaultOrder = 0;
+
   for (const p of products) {
     if (!map.has(p.category)) {
+      const override = covers[p.category] || {};
       map.set(p.category, {
         slug: p.category,
-        name: p.categoryName,
+        name: override.label || p.categoryName,
         count: 0,
-        sampleImage: p.mainImage,
+        sampleImage: override.image || p.mainImage,
         sampleVideo: p.videoUrl || "",
+        hidden: Boolean(override.hidden),
+        order: typeof override.order === "number" ? override.order : defaultOrder++,
       });
     }
     const entry = map.get(p.category);
@@ -37,5 +44,8 @@ export function getAllCategories() {
       entry.sampleVideo = p.videoUrl;
     }
   }
-  return Array.from(map.values());
+
+  return Array.from(map.values())
+    .filter((c) => includeHidden || !c.hidden)
+    .sort((a, b) => a.order - b.order);
 }
